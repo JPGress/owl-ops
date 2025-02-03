@@ -1,9 +1,9 @@
 # 0wL OPS - 0wL Operational Security
 
-![GitHub Repo stars](https://img.shields.io/github/stars/R3v4N/0wL-OPS?style=for-the-badge)
-![GitHub forks](https://img.shields.io/github/forks/R3v4N/0wL-OPS?style=for-the-badge)
-![GitHub issues](https://img.shields.io/github/issues/R3v4N/0wL-OPS?style=for-the-badge)
-![MIT License](https://img.shields.io/github/license/R3v4N/0wL-OPS?style=for-the-badge)
+![GitHub Repo stars](https://img.shields.io/github/stars/R3v4N/owl-ops?style=for-the-badge)
+![GitHub forks](https://img.shields.io/github/forks/R3v4N/owl-ops?style=for-the-badge)
+![GitHub issues](https://img.shields.io/github/issues/R3v4N/owl-ops?style=for-the-badge)
+![MIT License](https://img.shields.io/github/license/R3v4N/owl-ops?style=for-the-badge)
 
 ## **We Hunt in the Shadows.**  
 
