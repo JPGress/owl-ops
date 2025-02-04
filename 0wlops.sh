@@ -69,7 +69,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="1.26.106"
+VERSION="1.26.107"
 # Darth Release
 RELEASE="VADER"
 #* ====== CONSTANTS ======
@@ -877,13 +877,13 @@ RELEASE="VADER"
             echo
             echo -e " ${MAGENTA}[+] INSTRUCTIONS:${RESET}"
             echo
-            echo -e "\t1. Open a Windows PowerShell or Command Prompt."
-            echo -e "\t2. Run the following command to get your network details:"
+            echo -e "\t${GREEN}1. Open a Windows PowerShell or Command Prompt.${RESET}"
+            echo -e "\t${GREEN}2. Run the following command to get your network details:${RESET}"
             echo -e "\t\t${BRIGHT_GREEN}${BG_BLACK}ipconfig.exe /all${RESET}"
-            echo -e "\t3. Identify the following network interfaces:"
-            echo -e "\t\t- WSL Adapter (vEthernet (WSL)) -> Example: 172.21.144.1"
-            echo -e "\t\t- VirtualBox Host-Only Adapter -> Example: 192.168.56.1"
-            echo -e "\t4. Enter the details when prompted below.\n"
+            echo -e "\t${GREEN}3. Identify the following network interfaces:${RESET}"
+            echo -e "\t\t${GREEN}- WSL Adapter (vEthernet (WSL)) -> Example: 172.21.144.1${RESET}"
+            echo -e "\t\t${GREEN}- VirtualBox Host-Only Adapter -> Example: 192.168.56.1${RESET}"
+            echo -e "\t${GREEN}4. Enter the details when prompted below.\n${RESET}"
             echo -e "${GRAY} Press ENTER to continue ${RESET}"
             read -r 2> /dev/null
         }
@@ -907,8 +907,9 @@ RELEASE="VADER"
 
         ### === DISPLAY MANUAL WINDOWS ROUTE COMMAND ===
         function display_windows_route_instructions() {
+            echo
             echo -e " [+] To add the route in Windows, open a Command Prompt as Administrator and run:"
-            echo -e "\t${GREEN}route add $VBOX_NET $WSL_GATEWAY metric 10 -p ${RESET}"
+            echo -e "\t${BRIGHT_GREEN}route add $VBOX_NET $WSL_GATEWAY metric 10 -p ${RESET}"
 
             if [[ -n "$VBOX_ALT_NET" ]]; then
                 echo -e "\t${GREEN}route add $VBOX_ALT_NET $WSL_GATEWAY metric 10 -p ${RESET}"
@@ -924,6 +925,7 @@ RELEASE="VADER"
 
         ### === ENABLE PACKET FORWARDING IN WSL ===
         function enable_wsl_forwarding() {
+            echo
             echo -e "${CYAN} [+] Enabling packet forwarding in WSL...${RESET}"
             sudo sysctl -w net.ipv4.ip_forward=1 > /dev/null
             echo "net.ipv4.ip_forward=1" | sudo tee -a /etc/sysctl.conf > /dev/null
@@ -932,6 +934,7 @@ RELEASE="VADER"
 
         ### === ADD ROUTES IN WSL ===
         function add_wsl_routes() {
+            echo
             echo -e "${CYAN} [+] Adding static routes in WSL...${RESET}"
             sudo ip route add $VBOX_NET via $WSL_GATEWAY dev eth0 2>/dev/null
 
