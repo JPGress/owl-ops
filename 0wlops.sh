@@ -69,7 +69,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="1.26.102"
+VERSION="1.26.105"
 # Darth Release
 RELEASE="VADER"
 #* ====== CONSTANTS ======
@@ -890,15 +890,15 @@ RELEASE="VADER"
 
         ### === USER INPUT ===
         function get_user_input() {
-            echo -en "${GREEN}[?] Enter your WSL Gateway IP ${GRAY}(Example: 172.21.144.1)${RESET}: "
+            echo -en "${GREEN} [?] Enter your WSL Gateway IP ${GRAY}(Example: 172.21.144.1)${RESET}: "
             read WSL_GATEWAY
-            echo -en "${GREEN}[?] Enter your VirtualBox Network (CIDR) ${GRAY}(Example: 192.168.56.0/24)${RESET}: "
+            echo -en "${GREEN} [?] Enter your VirtualBox Network (CIDR) ${GRAY}(Example: 192.168.56.0/24)${RESET}: "
             read VBOX_NET
-            echo -en "${GRAY}[?] Do you have a second VBox network? (y/N)${RESET}: "
+            echo -en "${GRAY} [?] Do you have a second VBox network? (y/N)${RESET}: "
             read SECOND_VBOX
 
             if [[ "$SECOND_VBOX" =~ ^[Yy]$ ]]; then
-                echo -en "${GREEN}[?] Enter your Second VirtualBox Network (CIDR) ${GRAY}(Example: 192.168.28.0/24)${RESET}: "
+                echo -en "${GREEN} [?] Enter your Second VirtualBox Network (CIDR) ${GRAY}(Example: 192.168.28.0/24)${RESET}: "
                 read VBOX_ALT_NET
             else
                 VBOX_ALT_NET=""
@@ -941,8 +941,9 @@ RELEASE="VADER"
         }
 
         function final_message(){
-            echo -e "[✔] Setup complete! Run the Windows route command above."
-            echo -e "[!] If issues persist, restart WSL and re-run this script."
+            echo
+            echo -e "${GREEN} [V] Setup complete! Run the Windows route command above.${RESET}"
+            echo -e "${GRAY} [!] If issues persist, restart WSL and re-run this script.${RESET}"
             echo
             pause_script
         }
