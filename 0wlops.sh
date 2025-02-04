@@ -69,7 +69,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="1.26.002"
+VERSION="1.26.102"
 # Darth Release
 RELEASE="VADER"
 #* ====== CONSTANTS ======
@@ -874,8 +874,9 @@ RELEASE="VADER"
         function display_instructions() {
             clear
             display_banner_inside_functions
-
-            echo -e "${MAGENTA}[+] INSTRUCTIONS:${RESET}"
+            echo
+            echo -e " ${MAGENTA}[+] INSTRUCTIONS:${RESET}"
+            echo
             echo -e "\t1. Open a Windows PowerShell or Command Prompt."
             echo -e "\t2. Run the following command to get your network details:"
             echo -e "\t\t${BRIGHT_GREEN}${BG_BLACK}ipconfig.exe /all${RESET}"
@@ -883,19 +884,22 @@ RELEASE="VADER"
             echo -e "\t\t- WSL Adapter (vEthernet (WSL)) -> Example: 172.21.144.1"
             echo -e "\t\t- VirtualBox Host-Only Adapter -> Example: 192.168.56.1"
             echo -e "\t4. Enter the details when prompted below.\n"
-
             echo -e "${GRAY} Press ENTER to continue ${RESET}"
             read -r 2> /dev/null
         }
 
         ### === USER INPUT ===
         function get_user_input() {
-            read -p "${GREEN}[?] Enter your WSL Gateway IP ${GRAY}(Example: 172.21.144.1)${RESET}: " WSL_GATEWAY
-            read -p "${GREEN}[?] Enter your VirtualBox Network (CIDR) ${GRAY}(Example: 192.168.56.0/24)${RESET}: " VBOX_NET
-            read -p "${WHITE}[?] Do you have a second VBox network? (y/N)${RESET}: " SECOND_VBOX
+            echo -en "${GREEN}[?] Enter your WSL Gateway IP ${GRAY}(Example: 172.21.144.1)${RESET}: "
+            read WSL_GATEWAY
+            echo -en "${GREEN}[?] Enter your VirtualBox Network (CIDR) ${GRAY}(Example: 192.168.56.0/24)${RESET}: "
+            read VBOX_NET
+            echo -en "${GRAY}[?] Do you have a second VBox network? (y/N)${RESET}: "
+            read SECOND_VBOX
 
             if [[ "$SECOND_VBOX" =~ ^[Yy]$ ]]; then
-                read -p "${GREEN}[?] Enter your Second VirtualBox Network (CIDR) ${GRAY}(Example: 192.168.28.0/24)${RESET}: " VBOX_ALT_NET
+                echo -en "${GREEN}[?] Enter your Second VirtualBox Network (CIDR) ${GRAY}(Example: 192.168.28.0/24)${RESET}: "
+                read VBOX_ALT_NET
             else
                 VBOX_ALT_NET=""
             fi
@@ -903,36 +907,44 @@ RELEASE="VADER"
 
         ### === DISPLAY MANUAL WINDOWS ROUTE COMMAND ===
         function display_windows_route_instructions() {
-            echo -e "\n[+] To add the route in Windows, open a Command Prompt as Administrator and run:"
-            echo -e "     \033[1;32m route add $VBOX_NET $WSL_GATEWAY metric 10 -p \033[0m"
+            echo -e " [+] To add the route in Windows, open a Command Prompt as Administrator and run:"
+            echo -e "\t${GREEN}route add $VBOX_NET $WSL_GATEWAY metric 10 -p ${RESET}"
 
             if [[ -n "$VBOX_ALT_NET" ]]; then
-                echo -e "     \033[1;32m route add $VBOX_ALT_NET $WSL_GATEWAY metric 10 -p \033[0m"
+                echo -e "\t${GREEN}route add $VBOX_ALT_NET $WSL_GATEWAY metric 10 -p ${RESET}"
             fi
 
-            echo -e "\n[!] If you want to remove the route later, run:"
-            echo -e "     \033[1;31m route delete $VBOX_NET \033[0m"
+            echo -e " [!] If you want to remove the route later, run:"
+            echo -e "\t${BRIGHT_RED}route delete $VBOX_NET${RESET}"
 
             if [[ -n "$VBOX_ALT_NET" ]]; then
-                echo -e "     \033[1;31m route delete $VBOX_ALT_NET \033[0m"
+                echo -e "\t${BRIGHT_RED}route delete $VBOX_ALT_NET${RESET}"
             fi
         }
 
         ### === ENABLE PACKET FORWARDING IN WSL ===
         function enable_wsl_forwarding() {
-            echo "[+] Enabling packet forwarding in WSL..."
-            sudo sysctl -w net.ipv4.ip_forward=1
-            echo "net.ipv4.ip_forward=1" | sudo tee -a /etc/sysctl.conf
+            echo -e "${CYAN} [+] Enabling packet forwarding in WSL...${RESET}"
+            sudo sysctl -w net.ipv4.ip_forward=1 > /dev/null
+            echo "net.ipv4.ip_forward=1" | sudo tee -a /etc/sysctl.conf > /dev/null
+            echo -e "${CYAN} [+] Packet forwarding enabled${RESET}"
         }
 
         ### === ADD ROUTES IN WSL ===
         function add_wsl_routes() {
-            echo "[+] Adding static routes in WSL..."
+            echo -e "${CYAN} [+] Adding static routes in WSL...${RESET}"
             sudo ip route add $VBOX_NET via $WSL_GATEWAY dev eth0 2>/dev/null
 
             if [[ -n "$VBOX_ALT_NET" ]]; then
                 sudo ip route add $VBOX_ALT_NET via $WSL_GATEWAY dev eth0 2>/dev/null
             fi
+        }
+
+        function final_message(){
+            echo -e "[✔] Setup complete! Run the Windows route command above."
+            echo -e "[!] If issues persist, restart WSL and re-run this script."
+            echo
+            pause_script
         }
 
         ### === MAIN EXECUTION ===
@@ -942,9 +954,7 @@ RELEASE="VADER"
             display_windows_route_instructions
             enable_wsl_forwarding
             add_wsl_routes
-
-            echo "[✔] Setup complete! Run the Windows route command above."
-            echo "[!] If issues persist, restart WSL and re-run this script."
+            final_message
         }
 
         # Run the script
