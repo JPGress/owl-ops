@@ -69,7 +69,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="1.25.000"
+VERSION="1.26.000"
 # Darth Release
 RELEASE="VADER"
 #* ====== CONSTANTS ======
@@ -420,6 +420,7 @@ RELEASE="VADER"
         echo
         echo -e "${GRAY} [+] MISC ${RESET}"
             echo -e "\t${GRAY} [000] Exit ${RESET}"
+            echo -e "\t${GRAY} [001] Enable WSL routing to VM VBox ${RESET}"
         echo -e "${RED}+=========================== ${BRIGHT_GREEN}We Hunt in the Shadows${RESET}${RED} ================================+${RESET}"
     }
 
@@ -482,6 +483,7 @@ RELEASE="VADER"
                 602) arp_recon_daemon ;; # Deploy ARP Recon Agent
             #* [+] EXIT
                 0) exit_script ;;
+                1) enable_wsl_routing_vbox ;;
             #* Invalid option
                 *) invalid_option ;;  
             esac
@@ -490,6 +492,7 @@ RELEASE="VADER"
         function validate_input() {
             local input="$1"
             local valid_options=(
+                                $(seq 1 1) # [+] MISC
                                 $(seq 100 109) # [+] INTELLIGENCE GATHERING (RECON & OSINT)
                                 $(seq 200 203) # [+] VULNERABILITY ANALYSIS
                                 $(seq 300 302) # [+] EXPLOITATION & PRIVILEGE ESCALATION
@@ -851,6 +854,100 @@ RELEASE="VADER"
 
         # Execute the DNS Zone Transfer workflow
         dns_zt_workflow;
+    }
+    # Function: Enable WSL to communicate with VirtualBox VMs
+    function enable_wsl_routing_vbox(){
+        # enable_wsl_routing_vbox.sh - Enable WSL to communicate with VirtualBox VMs
+            # Author: R3v4N (w/GPT)
+            # Version: 1.3 - 2025-02-04
+            #
+            # Description:
+            #   - Sets up routing between WSL and VirtualBox VMs.
+            #   - Enables packet forwarding in WSL.
+            #   - Displays **manual Windows route commands** for user to run.
+            #
+            # Usage:
+            #   sudo ./enable_wsl_routing_vbox.sh
+            #
+        title="\t0wL OPS - WSL ↔ VBox Routing"
+        ### === DISPLAY INSTRUCTIONS ===
+        function display_instructions() {
+            clear
+            display_banner_inside_functions
+
+            echo -e "${BRIGHT_BLUE}[+] INSTRUCTIONS:${RESET}"
+            echo -e "\t1. Open a Windows PowerShell or Command Prompt."
+            echo -e "\t2. Run the following command to get your network details:"
+            echo -e "\t\t${BRIGHT_GREEN}${BG_BLACK}ipconfig.exe /all${RESET}"
+            echo -e "\t3. Identify the following network interfaces:"
+            echo -e "\t\t- WSL Adapter (vEthernet (WSL)) -> Example: 172.21.144.1"
+            echo -e "\t\t- VirtualBox Host-Only Adapter -> Example: 192.168.56.1"
+            echo -e "\t4. Enter the details when prompted below.\n"
+
+            pause_script
+        }
+
+        ### === USER INPUT ===
+        function get_user_input() {
+            read -p "[?] Enter your WSL Gateway IP (Example: 172.21.144.1): " WSL_GATEWAY
+            read -p "[?] Enter your VirtualBox Network (CIDR) (Example: 192.168.56.0/24): " VBOX_NET
+            read -p "[?] Do you have a second VBox network? (y/N): " SECOND_VBOX
+
+            if [[ "$SECOND_VBOX" =~ ^[Yy]$ ]]; then
+                read -p "[?] Enter your Second VirtualBox Network (CIDR) (Example: 192.168.28.0/24): " VBOX_ALT_NET
+            else
+                VBOX_ALT_NET=""
+            fi
+        }
+
+        ### === DISPLAY MANUAL WINDOWS ROUTE COMMAND ===
+        function display_windows_route_instructions() {
+            echo -e "\n[+] To add the route in Windows, open a Command Prompt as Administrator and run:"
+            echo -e "     \033[1;32m route add $VBOX_NET $WSL_GATEWAY metric 10 -p \033[0m"
+
+            if [[ -n "$VBOX_ALT_NET" ]]; then
+                echo -e "     \033[1;32m route add $VBOX_ALT_NET $WSL_GATEWAY metric 10 -p \033[0m"
+            fi
+
+            echo -e "\n[!] If you want to remove the route later, run:"
+            echo -e "     \033[1;31m route delete $VBOX_NET \033[0m"
+
+            if [[ -n "$VBOX_ALT_NET" ]]; then
+                echo -e "     \033[1;31m route delete $VBOX_ALT_NET \033[0m"
+            fi
+        }
+
+        ### === ENABLE PACKET FORWARDING IN WSL ===
+        function enable_wsl_forwarding() {
+            echo "[+] Enabling packet forwarding in WSL..."
+            sudo sysctl -w net.ipv4.ip_forward=1
+            echo "net.ipv4.ip_forward=1" | sudo tee -a /etc/sysctl.conf
+        }
+
+        ### === ADD ROUTES IN WSL ===
+        function add_wsl_routes() {
+            echo "[+] Adding static routes in WSL..."
+            sudo ip route add $VBOX_NET via $WSL_GATEWAY dev eth0 2>/dev/null
+
+            if [[ -n "$VBOX_ALT_NET" ]]; then
+                sudo ip route add $VBOX_ALT_NET via $WSL_GATEWAY dev eth0 2>/dev/null
+            fi
+        }
+
+        ### === MAIN EXECUTION ===
+        function enable_wsl_routing_vbox_workflow() {
+            display_instructions
+            get_user_input
+            display_windows_route_instructions
+            #enable_wsl_forwarding
+            #add_wsl_routes
+
+            echo "[✔] Setup complete! Run the Windows route command above."
+            echo "[!] If issues persist, restart WSL and re-run this script."
+        }
+
+        # Run the script
+        enable_wsl_routing_vbox_workflow
     }
     # Function: Find-base attack surface analysis
     function find_based_attack_surface_analysis() {
