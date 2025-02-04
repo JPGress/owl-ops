@@ -69,7 +69,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="1.26.107"
+VERSION="1.26.108"
 # Darth Release
 RELEASE="VADER"
 #* ====== CONSTANTS ======
@@ -926,7 +926,6 @@ RELEASE="VADER"
         ### === ENABLE PACKET FORWARDING IN WSL ===
         function enable_wsl_forwarding() {
             echo
-            echo -e "${CYAN} [+] Enabling packet forwarding in WSL...${RESET}"
             sudo sysctl -w net.ipv4.ip_forward=1 > /dev/null
             echo "net.ipv4.ip_forward=1" | sudo tee -a /etc/sysctl.conf > /dev/null
             echo -e "${CYAN} [+] Packet forwarding enabled${RESET}"
@@ -934,7 +933,6 @@ RELEASE="VADER"
 
         ### === ADD ROUTES IN WSL ===
         function add_wsl_routes() {
-            echo
             echo -e "${CYAN} [+] Adding static routes in WSL...${RESET}"
             sudo ip route add $VBOX_NET via $WSL_GATEWAY dev eth0 2>/dev/null
 
@@ -945,7 +943,7 @@ RELEASE="VADER"
 
         function final_message(){
             echo
-            echo -e "${GREEN} [V] Setup complete! Run the Windows route command above.${RESET}"
+            echo -e "${GREEN} [+] Setup complete! Run the Windows route command above.${RESET}"
             echo -e "${GRAY} [!] If issues persist, restart WSL and re-run this script.${RESET}"
             echo
             pause_script
