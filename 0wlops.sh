@@ -321,7 +321,7 @@ RELEASE="VADER"
     function pause_script() {
         echo -e "${GRAY} Press ENTER to continue ${RESET}"
         read -r 2> /dev/null
-        main_menu
+        main
     }
 
     # Function to restart the Tor service for IP rotation
@@ -478,7 +478,7 @@ RELEASE="VADER"
                 501) windows_basic_commands ;; # Windows Basic Commands (Quick Ref)
             #* [+] LATERAL MOVEMENT & NETWORK DISCOVERY
                 600) nmap_network_discovery ;; # Network Discovery (Nmap)
-                601) arp_scan ;; # ARP Network Scan
+                601) arp_network_scan ;; # ARP Network Scan
                 602) arp_recon_daemon ;; # Deploy ARP Recon Agent
             #* [+] EXIT
                 0) exit_script ;;
