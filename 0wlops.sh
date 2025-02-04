@@ -69,7 +69,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="1.26.001"
+VERSION="1.26.002"
 # Darth Release
 RELEASE="VADER"
 #* ====== CONSTANTS ======
@@ -884,7 +884,8 @@ RELEASE="VADER"
             echo -e "\t\t- VirtualBox Host-Only Adapter -> Example: 192.168.56.1"
             echo -e "\t4. Enter the details when prompted below.\n"
 
-            pause_script
+            echo -e "${GRAY} Press ENTER to continue ${RESET}"
+            read -r 2> /dev/null
         }
 
         ### === USER INPUT ===
