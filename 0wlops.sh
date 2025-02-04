@@ -69,7 +69,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="1.26.105"
+VERSION="1.26.106"
 # Darth Release
 RELEASE="VADER"
 #* ====== CONSTANTS ======
@@ -191,7 +191,7 @@ RELEASE="VADER"
     function display_banner_inside_functions(){
         clear;  # Clear the terminal screen for clean output
         ascii_banner_art;  # Display ASCII art banner
-        echo -e "${MAGENTA}\t\t\t$title ${RESET}"
+        echo -e "${RED}\t\t\t$title ${RESET}"
         subtitle;  # Display a subtitle
     }
     
@@ -869,7 +869,7 @@ RELEASE="VADER"
             # Usage:
             #   sudo ./enable_wsl_routing_vbox.sh
             #
-        title="\t0wL OPS - WSL ↔ VBox Routing"
+        title="0wL OPS - WSL ↔ VBox Routing"
         ### === DISPLAY INSTRUCTIONS ===
         function display_instructions() {
             clear
