@@ -69,7 +69,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="1.26.000"
+VERSION="1.26.001"
 # Darth Release
 RELEASE="VADER"
 #* ====== CONSTANTS ======
@@ -875,7 +875,7 @@ RELEASE="VADER"
             clear
             display_banner_inside_functions
 
-            echo -e "${BRIGHT_BLUE}[+] INSTRUCTIONS:${RESET}"
+            echo -e "${MAGENTA}[+] INSTRUCTIONS:${RESET}"
             echo -e "\t1. Open a Windows PowerShell or Command Prompt."
             echo -e "\t2. Run the following command to get your network details:"
             echo -e "\t\t${BRIGHT_GREEN}${BG_BLACK}ipconfig.exe /all${RESET}"
@@ -889,12 +889,12 @@ RELEASE="VADER"
 
         ### === USER INPUT ===
         function get_user_input() {
-            read -p "[?] Enter your WSL Gateway IP (Example: 172.21.144.1): " WSL_GATEWAY
-            read -p "[?] Enter your VirtualBox Network (CIDR) (Example: 192.168.56.0/24): " VBOX_NET
-            read -p "[?] Do you have a second VBox network? (y/N): " SECOND_VBOX
+            read -p "${GREEN}[?] Enter your WSL Gateway IP ${GRAY}(Example: 172.21.144.1)${RESET}: " WSL_GATEWAY
+            read -p "${GREEN}[?] Enter your VirtualBox Network (CIDR) ${GRAY}(Example: 192.168.56.0/24)${RESET}: " VBOX_NET
+            read -p "${WHITE}[?] Do you have a second VBox network? (y/N)${RESET}: " SECOND_VBOX
 
             if [[ "$SECOND_VBOX" =~ ^[Yy]$ ]]; then
-                read -p "[?] Enter your Second VirtualBox Network (CIDR) (Example: 192.168.28.0/24): " VBOX_ALT_NET
+                read -p "${GREEN}[?] Enter your Second VirtualBox Network (CIDR) ${GRAY}(Example: 192.168.28.0/24)${RESET}: " VBOX_ALT_NET
             else
                 VBOX_ALT_NET=""
             fi
@@ -939,8 +939,8 @@ RELEASE="VADER"
             display_instructions
             get_user_input
             display_windows_route_instructions
-            #enable_wsl_forwarding
-            #add_wsl_routes
+            enable_wsl_forwarding
+            add_wsl_routes
 
             echo "[✔] Setup complete! Run the Windows route command above."
             echo "[!] If issues persist, restart WSL and re-run this script."
