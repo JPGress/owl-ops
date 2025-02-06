@@ -69,7 +69,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="1.26.229"
+VERSION="1.26.235"
 # Darth Release
 RELEASE="VADER"
 #* ====== CONSTANTS ======
@@ -184,7 +184,7 @@ RELEASE="VADER"
         echo ""
         echo -e "${GRAY} Press ENTER to continue ${RESET}"
         read -r
-        main_menu
+        main
     }
     
     # Function: Display banner inside functions
@@ -393,7 +393,7 @@ RELEASE="VADER"
             echo -e "\t${RED} [107] DNS Reconnaissance ${RESET}"
             echo -e "\t${RED} [108] HTTP(S) Banner Grabber ${RESET}"
             echo -e "\t${RED} [109] Whois & DNS Reconnaissance ${RESET}"
-            echo -e "\t${RED} [110] Parsing HTML ${RESET}"                    
+            echo -e "\t${RED} [110] Parsing HTML ${BRIGHT_RED}(DISABLED) ${RESET}"                    
         echo
         echo -e "${BRIGHT_GREEN} [+] VULNERABILITY ANALYSIS ${RESET}"
             echo -e "\t${RED} [200] MiTM (Man-in-the-Middle) ${RESET}"
@@ -463,7 +463,7 @@ RELEASE="VADER"
                 107) recon_dns ;; # DNS Reconnaissance
                 108) banner_grabber ;; # HTTP(S) Banner Grabber
                 109) whois_dns_recon ;; # Whois & DNS Reconnaissance
-                110) parsing_html ;; # Parsing HTML
+                110) disabled ;; # parsing_html ;; # Parsing HTML
             #* [+] VULNERABILITY ANALYSIS
                 200) mitm ;; # MiTM (Man-in-the-Middle)  
                 201) smb_enum ;; # SMB Exploration Analysis
@@ -539,7 +539,7 @@ RELEASE="VADER"
         main_menu_workflow
     }
 
-#* ====== MAIN SCRIPTS (A-Z) ======
+#* ====== MAIN SCRIPTS (A-Z) ====== 
     # Function: ARP Network Scan
     function arp_network_scan() {
         # arp_network_scan - Fast LAN Discovery using ARP
@@ -831,7 +831,7 @@ RELEASE="VADER"
                 echo -e "${RED} No nameservers found for the domain $TARGET. ${RESET}"
                 echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
                 read -r 2> /dev/null  # Wait for the user to press Enter
-                main_menu;  # Redirect back to the main menu
+                main;  # Redirect back to the main menu
                 return  # Exit the function to prevent further execution
             fi
         }
@@ -851,7 +851,7 @@ RELEASE="VADER"
             dnz_zt_check;  # Validate nameservers
             dns_zt_attack;  # Perform the attack
             pause_script;  # Pause and wait for user input before returning
-            main_menu;  # Return to the main menu
+            main;  # Return to the main menu
         }
 
         # Execute the DNS Zone Transfer workflow
@@ -1379,7 +1379,7 @@ RELEASE="VADER"
         echo -e "${GRAY}All searches logged in: $LOG_FILE${RESET}"
         echo -e "${GRAY}Press ENTER to return to the main menu.${RESET}"
         read -r 2>/dev/null
-        main_menu
+        main
     }
     # Function: Interactive Guide for Resetting Root Password via GRUB
     function linux_root_password_reset() {
@@ -2091,7 +2091,7 @@ RELEASE="VADER"
                 echo -e "${YELLOW} Please check your search criteria or connection. ${RESET}"
                 echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
                 read -r 2>/dev/null
-                main_menu
+                main
                 return 1
             fi
 
@@ -2100,7 +2100,7 @@ RELEASE="VADER"
                 echo -e "${YELLOW} This usually happens when no results were found or when you got a Google ban! =/ ${RESET}"
                 echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
                 read -r 2>/dev/null
-                main_menu
+                main
                 return 1
             fi
             return 0  # File exists and is not empty
@@ -2134,7 +2134,7 @@ RELEASE="VADER"
             # Final step: Return to main menu
             echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
             read -r 2>/dev/null
-            main_menu
+            main
         }
 
         # Ensure main workflow is executed
@@ -2359,7 +2359,7 @@ RELEASE="VADER"
 
         nmap_discovery_workflow
     }
-    # Function: Script to analyze subdomains and WHOIS information for a website or a list of websites.
+    # Function: Script to analyze subdomains and WHOIS information for a website or a list of websites. FIXME: Fix the new functions
     function parsing_html() {
         # parsing_html - 
             #
@@ -2454,6 +2454,15 @@ RELEASE="VADER"
         }
 
         function parsing_html_analyze_site(){
+            echo -e "${BRIGHT_YELLOW} Analyzing: $SITE${RESET}"
+            parsing_html_get_ip_address $SITE >> "$output_file";
+            echo "=====================================================" >> "$output_file";
+            parsing_html_get_whois_info $SITE >> "$output_file";
+            parsing_html_get_dns_info $SITE >> "$output_file";
+
+        }
+
+        function parsing_html_analyze_subdomains(){
             # Analyze the provided site
             echo -e "${BRIGHT_YELLOW} Analyzing subdomains for: $SITE${RESET}"
             subdomains=($(parsing_html_extract_subdomains "$SITE"))
@@ -2495,6 +2504,7 @@ RELEASE="VADER"
             parsing_html_banner;
             parsing_html_check_dependencies;
             parsing_html_target_site;
+            parsing_html_analyze_subdomains;
             parsing_html_generate_report;
             parsing_html_analyze_site;
             parsing_html_completion_message
@@ -2563,7 +2573,7 @@ RELEASE="VADER"
         # Validate the user's input (ensure it's a positive number)
         if ! [[ "$TOP_PORTS" =~ ^[0-9]+$ ]] || [[ "$TOP_PORTS" -le 0 ]]; then
             echo -e "${RED}Invalid input! Please enter a positive number.${RESET}"
-            main_menu
+            main
             return
         fi
 
@@ -2587,7 +2597,7 @@ RELEASE="VADER"
         fi
 
         # Handle Ctrl+C interruptions gracefully
-        trap 'echo -e "\nScript interrupted by user."; main_menu; exit 1' SIGINT
+        trap 'echo -e "\nScript interrupted by user."; main; exit 1' SIGINT
 
         # Ask user to enter the IP range in CIDR notation
         echo -ne "${CYAN}Enter the IP range in CIDR notation (e.g., 192.168.1.0/24): ${RESET}"
@@ -2596,7 +2606,7 @@ RELEASE="VADER"
         # Validate the network mask
         if ! ipcalc -n -b -m "$NETWORK_MASK" >/dev/null 2>&1; then
             echo "Invalid network mask."
-            main_menu
+            main
             return
         fi
 
@@ -2866,7 +2876,7 @@ RELEASE="VADER"
                     echo -e "${RED}Error: Wordlist not found at $WORDLIST.${RESET}"
                     echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
                     read -r 2>/dev/null
-                    main_menu
+                    main
                     return 1
                 fi
                 TOTAL_LINES=$(wc -l "$WORDLIST" | awk '{print $1}')  # Count the total lines
@@ -3256,7 +3266,7 @@ RELEASE="VADER"
                 echo -e "${RED} Error: The specified file does not exist or is empty. ${RESET}"
                 echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
                 read -r 2> /dev/null
-                main_menu
+                main
                 return 1
             fi
         }
@@ -3283,7 +3293,7 @@ RELEASE="VADER"
             collect_inputs || return  # Collect inputs and return if validation fails
             perform_takeover_check  # Perform the subdomain takeover checks
             pause_script  # Pause and wait for the user before returning to the menu
-            main_menu  # Return to the main menu
+            main  # Return to the main menu
         }
 
         # Execute the workflow
