@@ -69,7 +69,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="1.26.118"
+VERSION="1.26.127"
 # Darth Release
 RELEASE="VADER"
 #* ====== CONSTANTS ======
@@ -397,7 +397,7 @@ RELEASE="VADER"
         echo
         echo -e "${BRIGHT_GREEN} [+] VULNERABILITY ANALYSIS ${RESET}"
             echo -e "\t${RED} [200] MiTM (Man-in-the-Middle) ${RESET}"
-            echo -e "\t${RED} [201] SMB Exploration Analysis ${RESET}"
+            echo -e "\t${RED} [201] SMB Exploration Analysis ${BRIGHT_RED}(Unstable) ${RESET}"
             echo -e "\t${RED} [202] Useful Network Commands (Quick Ref) ${RESET}"
             echo -e "\t${RED} [203] System Information (Linux OS) ${RESET}"
         echo
@@ -3012,9 +3012,15 @@ RELEASE="VADER"
             #
             # Example usage:
             # - Input: Target IP or hostname:
+            #!TODO: Improve header
+            #!TODO: Add input treatment for DOMAIN, USERNAME, PASSWORD and IP
+            #!FIXME:  "read: erro de leitura: 0: Recurso temporariamente indisponível"
+            #!TODO: Add dependencies treatment
+            #!FIXME: Fix the loop issue
+            #!TODO: Improve log file with timestamp
 
         function smb_display_banner(){
-            local title="SMB Enumeration"  # Define the title for this operation
+            local title="SMB Exploration Analysis"  # Define the title for this operation
             display_banner_inside_functions;
         }
 
@@ -3022,26 +3028,27 @@ RELEASE="VADER"
             echo -en "${GREEN} Enter the target IP address or hostname: ${RESET}"
                 read -r TARGET_IP  # Read the target IP or hostname from the user
             
-            echo -en "${GREEN} Do you have the DOMAIN NAME? (y/N)${RESET}"
+            echo -en "${GREEN} Do you have the DOMAIN NAME? (y/N): ${RESET}"
                 read -r REPLY_DOMAIN_NAME
                 if [[ $REPLY_DOMAIN_NAME =~ ^[Yy]$ ]]; then
                     echo -en "${GREEN} Enter the target DOMAIN NAME: ${RESET}"
                     read -r TARGET_DOMAIN  # Read the target domain from the user
                 fi
             
-            echo -en "${GREEN} Do you have the USERNAME? (y/N)${RESET}"
+            echo -en "${GREEN} Do you have the USERNAME? (y/N): ${RESET}"
                 read -r REPLY_USERNAME
                 if [[ $REPLY_USERNAME =~ ^[Yy]$ ]]; then
                     echo -en "${GREEN} Enter the target USERNAME: ${RESET}"
                     read -r SMB_USERNAME  # Read the target username from the user
                 fi
             
-            echo -en "${GREEN}Do you have the PASSWORD? (y/N)${RESET}"
+            echo -en "${GREEN} Do you have the PASSWORD? (y/N): ${RESET}"
                 read -r REPLY_PASSWORD
                 if [[ $REPLY_PASSWORD =~ ^[Yy]$ ]]; then
                     echo -en "${GREEN} Enter the target PASSWORD: ${RESET}"
                     read -r SMB_PASSWORD  # Read the target password from the user
                 fi
+            #echo -e "$TARGET_IP | $TARGET_DOMAIN | $SMB_USERNAME | $SMB_PASSWORD"
         }
 
         function smb_print_line(){
@@ -3051,6 +3058,7 @@ RELEASE="VADER"
         function smb_environment_information(){
             
             function smb_enum4linux(){
+                smb_print_line
                 echo -e "${YELLOW} Running enum4linux... ${RESET}" | tee -a smb_enum_results.txt
                 enum4linux -a $TARGET_IP | tee -a smb_enum_results.txt
                 smb_print_line
@@ -3077,10 +3085,10 @@ RELEASE="VADER"
             }
 
             function smb_msf_consolesless(){
-                msfconsole -q -x 'use auxiliary/scanner/smb/smb_version; set RHOSTS $TARGET_IP; set RPORT 139; run; exit' &&
-                msfconsole -q -x 'use auxiliary/scanner/smb/smb2; set RHOSTS $TARGET_IP; set RPORT 139; run; exit' &&
-                msfconsole -q -x 'use auxiliary/scanner/smb/smb_version; set RHOSTS $TARGET_IP; set RPORT 445; run; exit' &&
-                msfconsole -q -x 'use auxiliary/scanner/smb/smb2; set RHOSTS $TARGET_IP; set RPORT 445; run; exit'
+                msfconsole -q -x 'use auxiliary/scanner/smb/smb_version; set RHOSTS $TARGET_IP; set RPORT 139; run; exit' | tee -a smb_enum_results.txt &&
+                msfconsole -q -x 'use auxiliary/scanner/smb/smb2; set RHOSTS $TARGET_IP; set RPORT 139; run; exit' | tee -a smb_enum_results.txt &&
+                msfconsole -q -x 'use auxiliary/scanner/smb/smb_version; set RHOSTS $TARGET_IP; set RPORT 445; run; exit' | tee -a smb_enum_results.txt &&
+                msfconsole -q -x 'use auxiliary/scanner/smb/smb2; set RHOSTS $TARGET_IP; set RPORT 445; run; exit' | tee -a smb_enum_results.txt
             }
 
             function smb_environment_information_caller(){
@@ -3162,11 +3170,19 @@ RELEASE="VADER"
         function smb_enum_workflow(){
             smb_display_banner;
             smb_target;
-            #smb_environment_information_caller;
-            #smb_shared_folders_enumeration_caller;
+            if [ -n "$SMB_USERNAME" ] && [ -n "$SMB_PASSWD" ]; then
+                    smb_environment_information;
+                    smb_shared_folders_enumeration;
+                    smb_with_creds;
+                    exit_to_main_menu;
+                else
+                    smb_environment_information;
+                    smb_shared_folders_enumeration;
+                    exit_to_main_menu;
+            fi
+            
 
         }
-
 
         smb_enum_workflow;
     }
