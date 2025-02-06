@@ -69,7 +69,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="1.26.108"
+VERSION="1.26.118"
 # Darth Release
 RELEASE="VADER"
 #* ====== CONSTANTS ======
@@ -384,7 +384,7 @@ RELEASE="VADER"
     function display_numbered_menu_options() {
         echo -e "${BRIGHT_GREEN} [+] INTELLIGENCE GATHERING (RECON & OSINT) ${RESET}"
             echo -e "\t${RED} [100] Portscan (Netcat) ${RESET}" 
-            echo -e "\t${RED} [101] Parsing HTML ${RESET}" 
+            echo -e "\t${RED} [101] Portscan (Bash sockets) ${RESET}" 
             echo -e "\t${RED} [102] Google Hacking for OSINT ${RESET}" 
             echo -e "\t${RED} [103] Metadata Analysis ${RESET}" 
             echo -e "\t${RED} [104] DNS Zone Transfer ${RESET}" 
@@ -393,10 +393,11 @@ RELEASE="VADER"
             echo -e "\t${RED} [107] DNS Reconnaissance ${RESET}"
             echo -e "\t${RED} [108] HTTP(S) Banner Grabber ${RESET}"
             echo -e "\t${RED} [109] Whois & DNS Reconnaissance ${RESET}"
+            echo -e "\t${RED} [110] Parsing HTML ${RESET}"                    
         echo
         echo -e "${BRIGHT_GREEN} [+] VULNERABILITY ANALYSIS ${RESET}"
             echo -e "\t${RED} [200] MiTM (Man-in-the-Middle) ${RESET}"
-            echo -e "\t${RED} [201] Portscan (Bash sockets) ${RESET}"
+            echo -e "\t${RED} [201] SMB Exploration Analysis ${RESET}"
             echo -e "\t${RED} [202] Useful Network Commands (Quick Ref) ${RESET}"
             echo -e "\t${RED} [203] System Information (Linux OS) ${RESET}"
         echo
@@ -453,7 +454,7 @@ RELEASE="VADER"
             case $option in
             #* [+] INTELLIGENCE GATHERING (RECON & OSINT)       
                 100) portscan ;; # Portscan (Netcat)
-                101) parsing_html ;; # Parsing HTML
+                101) portscan_bashsocket ;; # Portscan (Bash sockets) 
                 102) google_hacking ;; # Google Hacking for OSINT  
                 103) metadata_analysis ;; # Metadata analysis
                 104) dns_zt ;; # DNS Zone Transfer  
@@ -462,9 +463,10 @@ RELEASE="VADER"
                 107) recon_dns ;; # DNS Reconnaissance
                 108) banner_grabber ;; # HTTP(S) Banner Grabber
                 109) whois_dns_recon ;; # Whois & DNS Reconnaissance
+                110) parsing_html ;; # Parsing HTML
             #* [+] VULNERABILITY ANALYSIS
                 200) mitm ;; # MiTM (Man-in-the-Middle)  
-                201) portscan_bashsocket ;; # Portscan (Bash sockets)  
+                201) smb_enum ;; # SMB Exploration Analysis
                 202) useful_linux_commands ;; # Useful Network Commands (Quick Ref) 
                 203) linux_sysinfo ;; # System Information (Linux OS)
             #* [+] EXPLOITATION & PRIVILEGE ESCALATION
@@ -493,7 +495,7 @@ RELEASE="VADER"
             local input="$1"
             local valid_options=(
                                 $(seq 1 1) # [+] MISC
-                                $(seq 100 109) # [+] INTELLIGENCE GATHERING (RECON & OSINT)
+                                $(seq 100 110) # [+] INTELLIGENCE GATHERING (RECON & OSINT)
                                 $(seq 200 203) # [+] VULNERABILITY ANALYSIS
                                 $(seq 300 302) # [+] EXPLOITATION & PRIVILEGE ESCALATION
                                 $(seq 400 401) # [+] POST-EXPLOITATION & PERSISTENCE
@@ -926,9 +928,9 @@ RELEASE="VADER"
         ### === ENABLE PACKET FORWARDING IN WSL ===
         function enable_wsl_forwarding() {
             echo
+            echo -e "${CYAN} [+] Enabling packet forwarding in WSL... ${RESET}"
             sudo sysctl -w net.ipv4.ip_forward=1 > /dev/null
             echo "net.ipv4.ip_forward=1" | sudo tee -a /etc/sysctl.conf > /dev/null
-            echo -e "${CYAN} [+] Packet forwarding enabled${RESET}"
         }
 
         ### === ADD ROUTES IN WSL ===
@@ -939,6 +941,8 @@ RELEASE="VADER"
             if [[ -n "$VBOX_ALT_NET" ]]; then
                 sudo ip route add $VBOX_ALT_NET via $WSL_GATEWAY dev eth0 2>/dev/null
             fi
+            echo -e "${CYAN} [!] Please wait... "
+            sleep 2
         }
 
         function final_message(){
@@ -953,9 +957,9 @@ RELEASE="VADER"
         function enable_wsl_routing_vbox_workflow() {
             display_instructions
             get_user_input
-            display_windows_route_instructions
             enable_wsl_forwarding
             add_wsl_routes
+            display_windows_route_instructions
             final_message
         }
 
@@ -2991,6 +2995,180 @@ RELEASE="VADER"
 
         # Execute the main workflow
         reverse_dns_workflow
+    }
+    # Function: Perform automated smb enumeration
+    function smb_enum() {
+        # vi_smb_enum - Perform automated SMB enumeration
+            #
+            # Description:
+            # This script automates SMB enumeration by querying the target host for available shares.
+            # It performs the following operations:
+            # 1. Prompts the user for the target IP address or hostname.
+            # 2. Queries the target host for available shares using the `smbclient` command.
+            # 3. Saves the results to a timestamped file for later analysis.
+            #
+            # Dependencies:
+            # - smbclient: To interact with SMB shares.
+            #
+            # Example usage:
+            # - Input: Target IP or hostname:
+
+        function smb_display_banner(){
+            local title="SMB Enumeration"  # Define the title for this operation
+            display_banner_inside_functions;
+        }
+
+        function smb_target(){
+            echo -en "${GREEN} Enter the target IP address or hostname: ${RESET}"
+                read -r TARGET_IP  # Read the target IP or hostname from the user
+            
+            echo -en "${GREEN} Do you have the DOMAIN NAME? (y/N)${RESET}"
+                read -r REPLY_DOMAIN_NAME
+                if [[ $REPLY_DOMAIN_NAME =~ ^[Yy]$ ]]; then
+                    echo -en "${GREEN} Enter the target DOMAIN NAME: ${RESET}"
+                    read -r TARGET_DOMAIN  # Read the target domain from the user
+                fi
+            
+            echo -en "${GREEN} Do you have the USERNAME? (y/N)${RESET}"
+                read -r REPLY_USERNAME
+                if [[ $REPLY_USERNAME =~ ^[Yy]$ ]]; then
+                    echo -en "${GREEN} Enter the target USERNAME: ${RESET}"
+                    read -r SMB_USERNAME  # Read the target username from the user
+                fi
+            
+            echo -en "${GREEN}Do you have the PASSWORD? (y/N)${RESET}"
+                read -r REPLY_PASSWORD
+                if [[ $REPLY_PASSWORD =~ ^[Yy]$ ]]; then
+                    echo -en "${GREEN} Enter the target PASSWORD: ${RESET}"
+                    read -r SMB_PASSWORD  # Read the target password from the user
+                fi
+        }
+
+        function smb_print_line(){
+            echo -e "${YELLOW}----------------------------------------${RESET}" | tee -a smb_enum_results.txt
+        }
+
+        function smb_environment_information(){
+            
+            function smb_enum4linux(){
+                echo -e "${YELLOW} Running enum4linux... ${RESET}" | tee -a smb_enum_results.txt
+                enum4linux -a $TARGET_IP | tee -a smb_enum_results.txt
+                smb_print_line
+            }
+
+            function smb_enum4linux-ng(){
+                echo -e "${YELLOW} Running enum4linux-ng... ${RESET}" | tee -a smb_enum_results.txt
+                enum4linux-ng -A $TARGET_IP | tee -a smb_enum_results.txt
+                smb_print_line
+            }
+
+            function smb_nmap(){
+                echo -e "${YELLOW} Running nmap... ${RESET}" | tee -a smb_enum_results.txt
+                nmap --script "safe or smb-enum-*" -p 445 $TARGET_IP | tee -a smb_enum_results.txt
+                smb_print_line
+                nmap -p 139,445 -vv -Pn --script=smb-vuln-cve2009-3103.nse,smb-vuln-ms06-025.nse,smb-vuln-ms07-029.nse,smb-vuln-ms08-067.nse,smb-vuln-ms10-054.nse,smb-vuln-ms10-061.nse,smb-vuln-ms17-010.nse $TARGET_IP | tee -a smb_enum_results.txt
+                smb_print_line
+            }
+
+            function smb_rpcclient(){
+                echo -e "${YELLOW} Running rpcclient... ${RESET}" | tee -a smb_enum_results.txt
+                rpcclient -U "" -N $TARGET_IP | tee -a smb_enum_results.txt
+                smb_print_line
+            }
+
+            function smb_msf_consolesless(){
+                msfconsole -q -x 'use auxiliary/scanner/smb/smb_version; set RHOSTS $TARGET_IP; set RPORT 139; run; exit' &&
+                msfconsole -q -x 'use auxiliary/scanner/smb/smb2; set RHOSTS $TARGET_IP; set RPORT 139; run; exit' &&
+                msfconsole -q -x 'use auxiliary/scanner/smb/smb_version; set RHOSTS $TARGET_IP; set RPORT 445; run; exit' &&
+                msfconsole -q -x 'use auxiliary/scanner/smb/smb2; set RHOSTS $TARGET_IP; set RPORT 445; run; exit'
+            }
+
+            function smb_environment_information_caller(){
+                smb_enum4linux;
+                smb_enum4linux-ng;
+                smb_nmap;
+                smb_rpcclient;
+            }
+
+            smb_environment_information_caller;
+
+        }
+
+        function smb_shared_folders_enumeration(){
+
+            function smb_smbclient(){
+                echo -e "${YELLOW} Enumerating shared folders... ${RESET}" | tee -a smb_enum_results.txt
+                smbclient --no-pass -L //$TARGET_IP | tee -a smb_enum_results.txt
+                smb_print_line
+                smbclient -N -L //$TARGET_IP | tee -a smb_enum_results.txt
+                smb_print_line
+                smbclient -N //$TARGET_IP/ --option="client min protocol"=LANMAN1 | tee -a smb_enum_results.txt
+                smb_print_line
+            }
+
+            function smb_smbmap(){
+                echo -e "${YELLOW} Enumerating shared folders with smbmap... ${RESET}" | tee -a smb_enum_results.txt
+                smbmap -H $TARGET_IP | tee -a smb_enum_results.txt
+                smb_print_line
+                smbmap -H $TARGET_IP -u null -p null | tee -a smb_enum_results.txt
+                smb_print_line
+                smbmap -H $TARGET_IP -u guest | tee -a smb_enum_results.txt
+                smb_print_line
+            }
+
+            function smb_crackmapexec(){
+                echo -e "${YELLOW} Enumerating shared folders with crackmapexec... ${RESET}" | tee -a smb_enum_results.txt
+                crackmapexec smb $TARGET_IP -u '' -p '' --shares | tee -a smb_enum_results.txt
+                smb_print_line
+                crackmapexec smb $TARGET_IP | tee -a smb_enum_results.txt
+                smb_print_line
+                crackmapexec smb $TARGET_IP --pass-pol -u "" -p "" | tee -a smb_enum_results.txt
+                smb_print_line
+                crackmapexec smb $TARGET_IP --pass-pol -u "guest" -p "" | tee -a smb_enum_results.txt
+                smb_print_line
+            }
+
+            function smb_null_session(){
+                echo -e "${YELLOW} Checking for null session... ${RESET}" | tee -a smb_enum_results.txt
+                shares=('C$' 'D$' 'ADMIN$' 'IPC$' 'PRINT$' 'FAX$' 'SYSVOL' 'NETLOGON')
+                for share in ${shares[*]}; do
+                    output=$(smbclient -U '%' -N \\\\$TARGET_IP\\$share -c '')
+
+                    if [[ -z $output ]]; then
+                        echo "[+] creating a null session is possible for $share" | tee -a smb_enum_results.txt  # no output if command goes through, thus assuming that a session was created
+                    else
+                        echo $output | tee -a smb_enum_results.txt # echo error message (e.g. NT_STATUS_ACCESS_DENIED or NT_STATUS_BAD_NETWORK_NAME)
+                    fi
+                done
+            }
+
+            function smb_shared_folders_enumeration_caller(){
+                smb_smbclient;
+                smb_smbmap;
+                smb_crackmapexec;
+                smb_null_session;
+            }
+
+            smb_shared_folders_enumeration_caller;
+
+        }
+
+        function smb_with_creds(){
+            smbmap -H $TARGET_IP -u $SMB_USERNAME -p $SMB_PASSWD
+            smbclient '\\\\$TARGET_IP\\\' -U $SMB_USERNAME -W $SMB_DOMAIN_NAME -l $TARGET_IP
+            crackmapexec smb $TARGET_IP -u $SMB_USERNAME -p $SMB_PASSWD --shares
+        }
+
+        function smb_enum_workflow(){
+            smb_display_banner;
+            smb_target;
+            #smb_environment_information_caller;
+            #smb_shared_folders_enumeration_caller;
+
+        }
+
+
+        smb_enum_workflow;
     }
     # Function: Perform a Subdomain Takeover check
     function Subdomain_takeover() {
