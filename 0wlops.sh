@@ -69,7 +69,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="1.26.127"
+VERSION="1.26.229"
 # Darth Release
 RELEASE="VADER"
 #* ====== CONSTANTS ======
@@ -2361,7 +2361,7 @@ RELEASE="VADER"
     }
     # Function: Script to analyze subdomains and WHOIS information for a website or a list of websites.
     function parsing_html() {
-        # parsing_html - Script to analyze subdomains and WHOIS information for a website or a list of websites.
+        # parsing_html - 
             #
             # Description:
             # This script performs the following operations:
@@ -2384,6 +2384,8 @@ RELEASE="VADER"
             # Version history:
             # - 1.0 (2024-01-15): Initial version with basic subdomain and WHOIS functionality.
             # - 1.1 (2024-01-24): Added dependency checks and updated timestamp format.
+            # TODO: - Add new versions history
+            # FIXME: Header have misinformations 
             #
             # Example usage:
             # - Input: https://example.com
@@ -2395,43 +2397,36 @@ RELEASE="VADER"
             #
 
         # Function to check if dependencies are installed
-        check_dependencies() {
+        function parsing_html_check_dependencies() { # TODO: Copy this function to smb_enum
             local dependencies=("curl" "whois" "nslookup" "dig")
             for dep in "${dependencies[@]}"; do
                 if ! command -v "$dep" &>/dev/null; then
-                    echo -e "${RED}Error: Dependency '$dep' is not installed.${RESET}"
-                    echo "Please install '$dep' before running this script."
+                    echo -e "${RED} Error: Dependency '$dep' is not installed.${RESET}"
+                    -e "${RED} Please install '$dep' before running this script.${RESET}"
                     exit 1
                 fi
             done
         }
 
-        # Call the dependency check function
-        check_dependencies
+        function parsing_html_banner(){
+            title="HTML Parser"
+            display_banner_inside_functions
+        }
 
-        # Prompt the user to input the desired website URL
-        echo -n "Enter the URL of the website to analyze (e.g.: businesscorp.com.br): "
-        read -r SITE
-
-        # Store the current date and time in the specified format (day-hour-minutes-month-year)
-        timestamp=$(date +"%d%H%M%b%Y" | tr '[:lower:]' '[:upper:]') # Example: 241408JAN2024
-        output_file="result_${SITE}_${timestamp}.txt"
-
-        # Function to print text in color
-        print_color() {
-            local color=$1
-            local text=$2
-            echo -e "\e[0;${color}m${text}\e[0m"
+        function parsing_html_target_site(){
+            # Prompt the user to input the desired website URL
+            echo -n " Enter the URL of the website to analyze (e.g.: businesscorp.com.br): "
+            read -r SITE
         }
 
         # Function to extract subdomains from an HTML page
-        extract_subdomains() {
+        function parsing_html_extract_subdomains() {
             local site=$1
             curl -s "$site" | grep -Eo '(http|https)://[^/"]+' | awk -F[/:] '{print $4}' | sort -u
         }
 
         # Function to get the IP address of a subdomain
-        get_ip_address() {
+        function parsing_html_get_ip_address() {
             local subdomain=$1
             local ip_address
             ip_address=$(host "$subdomain" | grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}' | head -n 1)
@@ -2439,54 +2434,74 @@ RELEASE="VADER"
         }
 
         # Function to get WHOIS information for a domain
-        get_whois_info() {
+        function parsing_html_get_whois_info() {
             local domain=$1
             whois "$domain" | grep -vE "^\s*(%|\*|;|$|>>>|NOTICE|TERMS|by|to)" | grep -E ':|No match|^$'
         }
 
         # Function to get DNS lookup information for a domain
-        get_dns_info() {
+        function parsing_html_get_dns_info() {
             local domain=$1
             nslookup "$domain" 2>/dev/null | grep "Address" | awk '{print $2}' | sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/, /g'
         }
 
-        # Add the timestamp to the beginning of the output file
-        echo -e "Report generated on: $timestamp\n" > "$output_file"
+        function parsing_html_generate_report (){
+            # Store the current date and time in the specified format (day-hour-minutes-month-year)
+            timestamp=$(date +"%d%H%M%b%Y" | tr '[:lower:]' '[:upper:]') # Example: 241408JAN2024
+            output_file="result_${SITE}_${timestamp}.txt"
+            # Add the timestamp to the beginning of the output file
+            echo -e "Report generated on: $timestamp\n" > "$output_file"
+        }
 
-        # Analyze the provided site
-        print_color 33 "Analyzing subdomains for: $SITE"
-        subdomains=($(extract_subdomains "$SITE"))
+        function parsing_html_analyze_site(){
+            # Analyze the provided site
+            echo -e "${BRIGHT_YELLOW} Analyzing subdomains for: $SITE${RESET}"
+            subdomains=($(parsing_html_extract_subdomains "$SITE"))
 
-        # Check if any subdomains were found
-        if [ ${#subdomains[@]} -eq 0 ]; then
-            print_color 31 "No subdomains found for: $SITE"
-            echo "No subdomains found for: $SITE" >> "$output_file"
-        else
-            print_color 32 "Subdomains found:"
-            for subdomain in "${subdomains[@]}"; do
-                print_color 36 "$subdomain"
+            # Check if any subdomains were found
+            if [ ${#subdomains[@]} -eq 0 ]; then
+                echo -e "${BRIGHT_REDS} No subdomains found for: $SITE${RESET}"
+                echo "No subdomains found for: $SITE" >> "$output_file"
+            else
+                echo -e "${BRIGHT_YELLOW} Subdomains found: ${RESET}"
+                for subdomain in "${subdomains[@]}"; do
+                    echo -e "${BRIGHT_YELLOW}$subdomain${RESET}"
 
-                # Get IP address for the subdomain
-                ip_result=$(get_ip_address "$subdomain")
-                echo "$ip_result" >> "$output_file"
+                    # Get IP address for the subdomain
+                    ip_result=$(parsing_html_get_ip_address "$subdomain")
+                    echo "$ip_result" >> "$output_file"
 
-                # Add WHOIS information
-                print_color 34 "WHOIS information for $subdomain"
-                get_whois_info "$subdomain" >> "$output_file"
+                    # Add WHOIS information
+                    echo -e "${BRIGHT_YELLOW} WHOIS information for $subdomain${RESET}"
+                    parsing_html_get_whois_info " $subdomain" >> "$output_file"
 
-                # Add DNS lookup information
-                print_color 34 "DNS Lookup information for $subdomain"
-                get_dns_info "$subdomain" >> "$output_file"
+                    # Add DNS lookup information
+                    echo -e "${BRIGHT_YELLOW} DNS Lookup information for $subdomain${RESET}"
+                    parsing_html_get_dns_info " $subdomain" >> "$output_file"
 
-                echo -e "\n" >> "$output_file"
-            done
-        fi
+                    echo "====================================================="
 
-        # Completion message
-        print_color 32 "Analysis complete. Results saved to: $output_file"
-        echo -e "${GRAY}Press ENTER to continue${RESET}"
-        read -r 2>/dev/null
-        main_menu
+                    echo -e "\n" >> "$output_file"
+                done
+            fi
+        }
+
+        function parsing_html_completion_message(){
+            # Completion message
+            echo -e "${BRIGHT_YELLOW} Analysis complete. Results saved to: $output_file${RESET}"
+        }
+
+        function parsing_html_workflow(){
+            parsing_html_banner;
+            parsing_html_check_dependencies;
+            parsing_html_target_site;
+            parsing_html_generate_report;
+            parsing_html_analyze_site;
+            parsing_html_completion_message
+            pause_script;
+        }
+
+        parsing_html_workflow;
     }
     # Function: Script to perform a port scan on a network using netcat
     function portscan() {
