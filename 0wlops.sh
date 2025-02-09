@@ -414,7 +414,7 @@ RELEASE="VADER"
             echo -e "\t${RED} [107] DNS Reconnaissance ${RESET}"
             echo -e "\t${RED} [108] HTTP(S) Banner Grabber ${RESET}"
             echo -e "\t${RED} [109] Whois & DNS Reconnaissance ${RESET}"
-            echo -e "\t${RED} [110] Parsing HTML ${BRIGHT_RED}(DISABLED) ${RESET}"                    
+            echo -e "\t${RED} [110] Parsing HTML ${BRIGHT_RED}(DISABLED) ${RESET}"      
         echo
         echo -e "${BRIGHT_GREEN} [+] VULNERABILITY ANALYSIS ${RESET}"
             echo -e "\t${RED} [200] MiTM (Man-in-the-Middle) ${RESET}"
