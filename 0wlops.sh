@@ -69,7 +69,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="1.27.100"
+VERSION="1.27.101"
 # Darth Release
 RELEASE="VADER"
 #* ====== CONSTANTS ======
