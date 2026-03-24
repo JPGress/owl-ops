@@ -46,8 +46,8 @@
     #
     # Version History:
     #
-    #  v1.27.000 - 2026-03-23 (VADER), R3v4N:
-    #   - Focused on solving bugs and improving performance.
+    #  v1.25.xxx - 2025-08-25 (VADER), R3v4N:
+    #   - xxxxxxx
     #
     #  v1.25.000 - 2025-02-02 (VADER), R3v4N:
     #   - Introduced ARP-based network scanning.
@@ -72,7 +72,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="1.27.000"
+VERSION="1.27.101"
 # Darth Release
 RELEASE="VADER"
 #* ====== CONSTANTS ======
@@ -82,27 +82,61 @@ RELEASE="VADER"
     RED="\e[31m"
     GREEN="\e[32m"
     YELLOW="\e[33m"
+    BLUE="\e[34m"
     MAGENTA="\e[35m"
     CYAN="\e[36m"
+    WHITE="\e[37m"
+    GRAY="\e[90m"
 
     # Bright foreground colors
+    BRIGHT_BLACK="\e[90m"
     BRIGHT_RED="\e[91m"
     BRIGHT_GREEN="\e[92m"
     BRIGHT_YELLOW="\e[93m"
+    BRIGHT_BLUE="\e[94m"
+    BRIGHT_MAGENTA="\e[95m"
+    BRIGHT_CYAN="\e[96m"
+    BRIGHT_WHITE="\e[97m"
 
     # Background colors
     BG_BLACK="\e[40m"
     BG_RED="\e[41m"
+    BG_GREEN="\e[42m"
+    BG_YELLOW="\e[43m"
+    BG_BLUE="\e[44m"
+    BG_MAGENTA="\e[45m"
+    BG_CYAN="\e[46m"
+    BG_WHITE="\e[47m"
 
     # Bright background colors
+    BG_BRIGHT_BLACK="\e[100m"
     BG_BRIGHT_RED="\e[101m"
+    BG_BRIGHT_GREEN="\e[102m"
+    BG_BRIGHT_YELLOW="\e[103m"
+    BG_BRIGHT_BLUE="\e[104m"
+    BG_BRIGHT_MAGENTA="\e[105m"
+    BG_BRIGHT_CYAN="\e[106m"
+    BG_BRIGHT_WHITE="\e[107m"
 
     # Text formatting
     BOLD="\e[1m"
+    DIM="\e[2m"
+    ITALIC="\e[3m"
+    UNDERLINE="\e[4m"
+    BLINK="\e[5m"
+    INVERT="\e[7m"
+    HIDDEN="\e[8m"
+    STRIKETHROUGH="\e[9m"
 
     # Reset codes
     RESET="\e[0m"
     RESET_BOLD="\e[21m"
+    RESET_DIM="\e[22m"
+    RESET_UNDERLINE="\e[24m"
+    RESET_BLINK="\e[25m"
+    RESET_INVERT="\e[27m"
+    RESET_HIDDEN="\e[28m"
+    RESET_STRIKETHROUGH="\e[29m"
 
     # Author (jpgress@gmail.com)
     AUTHOR="R3v4N's 0wL"
@@ -110,6 +144,14 @@ RELEASE="VADER"
 #* ====== SUPPORT FUNCTIONS (A-Z) ======
     # Function: Enable Proxychains
     function ascii_banner_art() {
+        
+            #! Banner full 
+                #!  ██████╗ ██╗    ██╗██╗         ██████╗ ███████╗███╗   ██╗████████╗███████╗███████╗████████╗    ███████╗ ██████╗██████╗ ██╗██████╗ ████████╗
+                #! ██╔═████╗██║    ██║██║         ██╔══██╗██╔════╝████╗  ██║╚══██╔══╝██╔════╝██╔════╝╚══██╔══╝    ██╔════╝██╔════╝██╔══██╗██║██╔══██╗╚══██╔══╝
+                #! ██║██╔██║██║ █╗ ██║██║         ██████╔╝█████╗  ██╔██╗ ██║   ██║   █████╗  ███████╗   ██║       ███████╗██║     ██████╔╝██║██████╔╝   ██║   
+                #! ████╔╝██║██║███╗██║██║         ██╔═══╝ ██╔══╝  ██║╚██╗██║   ██║   ██╔══╝  ╚════██║   ██║       ╚════██║██║     ██╔══██╗██║██╔═══╝    ██║   
+                #! ╚██████╔╝╚███╔███╔╝███████╗    ██║     ███████╗██║ ╚████║   ██║   ███████╗███████║   ██║       ███████║╚██████╗██║  ██║██║██║        ██║   
+                #!  ╚═════╝  ╚══╝╚══╝ ╚══════╝    ╚═╝     ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝╚══════╝   ╚═╝       ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝╚═╝        ╚═╝   
         echo
         echo -e "\t\t ${RED}${BG_BLACK} ██████╗ ██╗    ██╗██╗        ██████╗ ██████╗ ███████╗ ${RESET}"
         echo -e "\t\t ${RED}${BG_BLACK}██╔═████╗██║    ██║██║       ██╔═══██╗██╔══██╗██╔════╝ ${RESET}"
@@ -123,7 +165,7 @@ RELEASE="VADER"
     # Function: Display the menu header with the script name and author
     function author_version() {
         echo -e "\t\t${BG_BRIGHT_RED}${BLACK} 0wL Operators Script by $AUTHOR - v$VERSION ($RELEASE)${RESET}"
-        break_line;
+        subtitle;
     }
 
     # Function: 3-second countdown
@@ -153,7 +195,7 @@ RELEASE="VADER"
         clear;  # Clear the terminal screen for clean output
         ascii_banner_art;  # Display ASCII art banner
         echo -e "${RED}\t\t\t$title ${RESET}"
-        break_line;  # Display a break_line
+        subtitle;  # Display a subtitle
     }
     
     # Function: display command usage
@@ -174,7 +216,7 @@ RELEASE="VADER"
     function display_section() {
         local title="$1"
         echo -e "# SECTION: $title" | tee -a "$LOG_FILE"
-        break_line
+        subtitle
         echo -e "" | tee -a "$LOG_FILE"
     }
 
@@ -182,7 +224,7 @@ RELEASE="VADER"
     function display_section_no_log() {
         local title="$1"
         echo -e "# SECTION: $title" 
-        break_line
+        subtitle
         echo -e ""
     }
 
@@ -340,7 +382,7 @@ RELEASE="VADER"
     }
 
     #! TODO: RENAME THIS FUNCTION TO A BETTER NAME
-    function break_line() {
+    function subtitle() {
         echo -e "${RED}+====================================================================================+${RESET}"
     }
 
@@ -428,7 +470,7 @@ RELEASE="VADER"
             clear  # Clear the screen
             ascii_banner_art  # Display ASCII banner
             echo -e "${GREEN}\t\tSelect an option by entering the corresponding number${RESET}"
-            break_line  # Show a break_line
+            subtitle  # Show a subtitle
         }
 
         # Process menu selection
@@ -799,7 +841,7 @@ RELEASE="VADER"
             clear;  # Clear the terminal for a clean interface
             ascii_banner_art;  # Display an ASCII banner
             echo -e "${MAGENTA} DNS Zone Transfer ${RESET}"  # Show the operation's name
-            break_line;  # Add a decorative break_line
+            subtitle;  # Add a decorative subtitle
             echo -en "${RED} Enter the target domain or URL: ${RESET}"  # Ask for the target domain
             read -r TARGET  # Store user input in the TARGET variable
         }
@@ -1199,7 +1241,7 @@ RELEASE="VADER"
     }
     # Function: Script to automate Google hacking queries for reconnaissance
     function google_hacking() {
-        # iii_google_hacking - Automates Google hacking queries for reconnaissance
+        # google_hacking - Automates Google hacking queries for reconnaissance
             #
             # Description:
             # This script automates Google hacking techniques to gather information about a target.
@@ -1298,7 +1340,8 @@ RELEASE="VADER"
         # Function to check the current IP address
         function check_ip() {
             echo "Checking your current IP address..."
-            local ip=$(curl -s https://api.ipify.org)
+            local ip;
+            ip=$(curl -s https://api.ipify.org)
             if [[ -z "$ip" ]]; then
                 echo "Failed to retrieve IP address. Please check your connection or proxy settings."
                 echo "Failed to retrieve IP address." >> "$LOG_FILE"
@@ -1324,7 +1367,8 @@ RELEASE="VADER"
 
         # Function for file type searches
         function FileSearch() {
-            local type="$1"
+            local type
+            type="$1"
             local extension="$2"
             perform_query "https://www.google.com/search?q=filetype:$extension+intext:$PROCESSED_TARGET"
         }
@@ -2401,11 +2445,11 @@ RELEASE="VADER"
         }
 
         function log_info() {
-            break_line
+            subtitle
             echo
             echo -e "${CYAN}System enumeration log file saved as ${GREEN}$LOG_FILE${RESET}${CYAN} in ${GREEN}$LOG_DIR${RESET}"
             echo
-            break_line
+            subtitle
         }
 
         # Main execution workflow
@@ -2486,7 +2530,7 @@ RELEASE="VADER"
             # Display the title of this analysis step with colored formatting
             echo -e "${MAGENTA} 4 - Metadata Analysis ${RESET}"
             
-            break_line;  # Displays a break_line or additional details about the script
+            subtitle;  # Displays a subtitle or additional details about the script
 
             # Prompt the user to enter the domain or website they want to analyze (e.g., government or business domains)
             echo -n " Enter the domain or extension to search (e.g., businesscorp.com.br): "
@@ -3818,7 +3862,7 @@ RELEASE="VADER"
             clear;  # Clear the terminal screen for clean output
             ascii_banner_art;  # Display ASCII art banner
             echo -e "${MAGENTA} Subdomain Takeover ${RESET}"
-            break_line;  # Display a break_line
+            subtitle;  # Display a subtitle
 
             # Prompt for the target domain
             echo -en "${CYAN} Enter the target domain (e.g., example.com): ${RESET}"
@@ -3910,7 +3954,7 @@ RELEASE="VADER"
             
             echo -e "${GRAY} Note: Replace 'eth0' with your actual network interface. Use 'ifconfig -a' or 'ip addr' to find it.${RESET}"
             echo
-            break_line;  # Add a decorative break_line
+            subtitle;  # Add a decorative subtitle
         }
 
         # Function to display connection monitoring commands
@@ -3923,7 +3967,7 @@ RELEASE="VADER"
             
             echo -e "${GRAY} Note: To check for suspicious connections, use 'ss -lntp'.${RESET}"
             echo
-            break_line;  # Add a decorative break_line
+            subtitle;  # Add a decorative subtitle
         }
 
         # Function to display routing-related commands
@@ -3934,7 +3978,7 @@ RELEASE="VADER"
             display_command  "route"
             display_command "ip route"
             
-            break_line;  # Add a decorative break_line
+            subtitle;  # Add a decorative subtitle
         }
 
         # Function to display persistent network configuration information
@@ -3944,7 +3988,7 @@ RELEASE="VADER"
             echo
             echo -e "${GRENN} In ${RED}Red Hat-based${RESET} systems, network configurations are stored in: ${RED}/etc/sysconfig/network-scripts${RESET}"
             echo
-            break_line;  # Add a decorative break_line
+            subtitle;  # Add a decorative subtitle
         }
 
         # Main execution workflow
