@@ -443,43 +443,43 @@ RELEASE="VADER"
         function process_menu_option() {
             local option="$1"
             case $option in
-            #* [+] INTELLIGENCE GATHERING (RECON & OSINT)       
-                100) portscan ;; # Portscan (Netcat)
-                101) portscan_bashsocket ;; # Portscan (Bash sockets) 
-                102) google_hacking ;; # Google Hacking for OSINT  
-                103) metadata_analysis ;; # Metadata analysis
-                104) dns_zt ;; # DNS Zone Transfer  
-                105) Subdomain_takeover ;; # Subdomain Takeover  
-                106) rev_dns ;; # Reverse DNS Lookup   
-                107) recon_dns ;; # DNS Reconnaissance
-                108) banner_grabber ;; # HTTP(S) Banner Grabber
-                109) whois_dns_recon ;; # Whois & DNS Reconnaissance
-                110) parsing_html ;; # Parsing HTML
-            #* [+] VULNERABILITY ANALYSIS
-                200) mitm ;; # MiTM (Man-in-the-Middle)  
-                201) smb_enum ;; # SMB Exploration Analysis
-                202) useful_linux_commands ;; # Useful Network Commands (Quick Ref) 
-                203) linux_sysinfo ;; # System Information (Linux OS)
-            #* [+] EXPLOITATION & PRIVILEGE ESCALATION
-                300) find_based_attack_surface_analysis ;; # Attack Surface Analysis (find Based)   
-                301) find_command_examples ;; # File Discovery & Enumeration (Quick Ref)
-                302) linux_root_password_reset ;; # Root Password Reset Guide (Linux OS)
-                303) jalesc ;; # Just Another Linux Escalation Script - JALESC
-            #* [+] POST-EXPLOITATION & PERSISTENCE
-                400) vim_quick_reference ;; # Vim Escape Techniques (Quick Ref)
-                401) rbash_escape_methods ;; # Rbash Escape Techniques (Linux OS)
-            #* [+] NETWORK & SYSTEM EXPLOITATION
-                500) wireless_pentest ;; # Wireless Penetration Testing Toolkit   
-                501) windows_basic_commands ;; # Windows Basic Commands (Quick Ref)
-            #* [+] LATERAL MOVEMENT & NETWORK DISCOVERY
-                600) nmap_network_discovery ;; # Network Discovery (Nmap)
-                601) arp_network_scan ;; # ARP Network Scan
-                602) arp_recon_daemon ;; # Deploy ARP Recon Agent
-            #* [+] EXIT
-                0) exit_script ;;
-                1) enable_wsl_routing_vbox ;;
+            #* [+] RECONNAISSANCE
+                102) google_hacking ;;          # Gather Victim Host Information - Search Engines (T1593.001)
+                103) metadata_analysis ;;       # Gather Victim Identity Information - Document Metadata
+                106) rev_dns ;;                 # Gather Victim Network Information - Reverse DNS Lookup
+                107) recon_dns ;;               # Gather Victim Network Information - DNS Recon
+                109) whois_dns_recon ;;         # Gather Victim Network Information - Whois & DNS
+                110) parsing_html ;;            # Gather Victim Web Presence - HTML Parsing (DISABLED)
+            #* [+] RESOURCE DEVELOPMENT / INITIAL ACCESS
+                104) dns_zt ;;                  # Exploit Public-Facing Infrastructure - DNS Zone Transfer
+                105) Subdomain_takeover ;;      # Subdomain Takeover Assessment
+                500) wireless_pentest ;;        # Wireless Access Operations Toolkit
+            #* [+] DISCOVERY
+                100) portscan ;;                # Network Service Discovery - Netcat Port Scan
+                101) portscan_bashsocket ;;     # Network Service Discovery - Bash Socket Scan
+                108) banner_grabber ;;          # Service Discovery - HTTP(S) Banner Grabbing
+                201) smb_enum ;;               # SMB Service Enumeration (UNSTABLE)
+                203) linux_sysinfo ;;           # System Information Discovery - Linux
+                300) find_based_attack_surface_analysis ;; # File and Directory Discovery - Attack Surface Review
+                301) find_command_examples ;;   # File and Directory Discovery - Quick Reference
+                600) nmap_network_discovery ;;  # Network Service Discovery - Nmap Scan
+                601) arp_network_scan ;;        # Network Neighbor Discovery - ARP Scan
+            #* [+] CREDENTIAL ACCESS / COLLECTION
+                200) mitm ;;                    # Adversary-in-the-Middle Simulation (T1557)
+            #* [+] PRIVILEGE ESCALATION
+                302) linux_root_password_reset ;; # Local Access Recovery - Root Password Reset Guide
+                303) jalesc ;;                  # Privilege Escalation Enumeration - JALESC
+                400) vim_quick_reference ;;     # Escape to Shell - Vim Techniques
+                401) rbash_escape_methods ;;    # Escape to Shell - Restricted Bash Techniques
+            #* [+] LATERAL MOVEMENT / INTERNAL RECON
+                602) arp_recon_daemon ;;        # Internal Recon Agent Deployment
+            #* [+] OPERATOR UTILITIES
+                202) useful_linux_commands ;;   # Network Commands - Quick Reference
+                501) windows_basic_commands ;;  # Windows Commands - Quick Reference
+                1) enable_wsl_routing_vbox ;;   # Enable WSL Routing to VirtualBox VM
+                0) exit_script ;;               # Exit
             #* Invalid option
-                *) invalid_option ;;  
+                *) invalid_option ;;
             esac
         }
 
