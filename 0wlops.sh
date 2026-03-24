@@ -46,6 +46,12 @@
     #
     # Version History:
     #
+    #  v1.27.010 - 2026-03-24 (VADER), R3v4N:
+    #   - Focused on solving bugs and improving performance.
+    #   - Added new menu options.
+    #   - Added new colors.
+    #   - More PTES categories.
+    #
     #  v1.27.000 - 2026-03-23 (VADER), R3v4N:
     #   - Focused on solving bugs and improving performance.
     #
@@ -84,6 +90,8 @@ RELEASE="VADER"
     YELLOW="\e[33m"
     MAGENTA="\e[35m"
     CYAN="\e[36m"
+    PURPLE="\e[35m"
+    GRAY="\e[90m"
 
     # Bright foreground colors
     BRIGHT_RED="\e[91m"
@@ -365,46 +373,97 @@ RELEASE="VADER"
     # Display numbered menu options
     function display_numbered_menu_options() {
         # This function
-        echo -e "${BRIGHT_GREEN} [+] RECONNAISSANCE ${RESET}"
-            echo -e "\t${RED} [102] Gather Victim Host Information - Search Engines (T1593.001) ${RESET}" #echo -e "\t${RED} [102] Google Hacking for OSINT ${RESET}" 
-            echo -e "\t${RED} [103] Gather Victim Identity Information - Document Metadata (T1589 / T1592) ${RESET}" #echo -e "\t${RED} [103] Metadata Analysis ${RESET}" 
-            echo -e "\t${RED} [106] Gather Victim Network Information - Reverse DNS Lookup (T1590.001) ${RESET}" #echo -e "\t${RED} [106] Reverse DNS Lookup ${RESET}" 
-            echo -e "\t${RED} [107] Gather Victim Network Information - DNS Recon (T1590.001) ${RESET}" #echo -e "\t${RED} [107] DNS Reconnaissance ${RESET}"
-            echo -e "\t${RED} [109] Gather Victim Network Information - Whois & DNS (T1590) ${RESET}" #echo -e "\t${RED} [109] Whois & DNS Reconnaissance ${RESET}"
-            echo -e "\t${RED} [110] Gather Victim Web Presence - HTML Parsing ${BRIGHT_RED} (DISABLED) ${RESET}" #echo -e "\t${RED} [110] Parsing HTML ${BRIGHT_RED}(DISABLED) ${RESET}"      
+        echo -e "${BRIGHT_GREEN} [+] RECONNAISSANCE [TA0043] ${RESET}"
+            echo -e "\t${PURPLE} - The adversary is trying to gather information they can use to plan future operations.${RESET}"
+            echo -e "\t${PURPLE} --- ${RESET}"
+            echo -e "\t${RED} [103] Gather Victim Identity Information - Document Metadata (T1589 / T1592) ${RESET}"
+            echo -e "\t${RED} [109] Gather Victim Network Information - Whois & DNS (T1590) ${RESET}"
+            echo -e "\t${RED} [106] Gather Victim Network Information - Reverse DNS Lookup (T1590.001) ${RESET}"
+            echo -e "\t${RED} [107] Gather Victim Network Information - DNS Recon (T1590.001) ${RESET}"
+            echo -e "\t${RED} [102] Gather Victim Host Information - Search Engines (T1593.001) ${RESET}"
+            echo -e "\t${RED} [110] Gather Victim Web Presence - HTML Parsing ${BRIGHT_RED} (DISABLED) ${RESET}"      
         echo
         #
-        echo -e "${BRIGHT_GREEN} [+] RESOURCE DEVELOPMENT / INITIAL ACCESS ${RESET}"
-            echo -e "\t${RED} [104] Exploit Public-Facing Infrastructure - DNS Zone Transfer ${RESET}" #echo -e "\t${RED} [104] DNS Zone Transfer ${RESET}"
-            echo -e "\t${RED} [105] Subdomain Takeover Assessment ${RESET}" #echo -e "\t${RED} [105] Subdomain Takeover ${RESET}" 
-            echo -e "\t${RED} [500] Wireless Access Operations Toolkit ${RESET}" #echo -e "\t${RED} [500] Wireless Penetration Testing Toolkit ${RESET}"
+        echo -e "${BRIGHT_GREEN} [+] RESOURCE DEVELOPMENT [TA0042] ${RESET}"
+            echo -e "\t${PURPLE} - The adversary is trying to establish resources they can use to support operations.${RESET}"
+            echo -e "\t${PURPLE} --- ${RESET}"
+            echo -e "\t${RED} [105] Subdomain Takeover Assessment (T1583.002) ${RESET}" 
+            echo -e "\t${RED} [104] Exploit Public-Facing Infrastructure - DNS Zone Transfer (T1584.002) ${RESET}" 
         echo
         #
-        echo -e "${BRIGHT_GREEN} [+] DISCOVERY ${RESET}"
-            echo -e "\t${RED} [100] Network Service Discovery - Netcat Port Scan (T1046) ${RESET}" #echo -e "\t${RED} [100] Portscan (Netcat) ${RESET}"
-            echo -e "\t${RED} [101] Network Service Discovery - Bash Socket Scan (T1046) ${RESET}" #echo -e "\t${RED} [101] Portscan (Bash sockets) ${RESET}"
-            echo -e "\t${RED} [108] Service Discovery - HTTP(S) Banner Grabbing (T1046) ${RESET}" #echo -e "\t${RED} [108] HTTP(S) Banner Grabber ${RESET}"
-            echo -e "\t${RED} [201] SMB Service Enumeration ${BRIGHT_RED}(UNSTABLE) ${RESET}" #echo -e "\t${RED} [201] SMB Exploration Analysis ${BRIGHT_RED}(Unstable) ${RESET}"
-            echo -e "\t${RED} [203] System Information Discovery - Linux (T1082) ${RESET}" #echo -e "\t${RED} [203] System Information (Linux OS) ${RESET}"
-            echo -e "\t${RED} [300] File and Directory Discovery - Attack Surface Review (T1083) ${RESET}" #echo -e "\t${RED} [300] Attack Surface Analysis (find Based) ${RESET}"
-            echo -e "\t${RED} [301] File and Directory Discovery - Quick Reference (T1083) ${RESET}" #echo -e "\t${RED} [301] File Discovery & Enumeration (Quick Ref) ${RESET}"
-            echo -e "\t${RED} [600] Network Service Discovery - Nmap Scan (T1046) ${RESET}" #echo -e "\t${RED} [600] Nmap Network Scan ${RESET}"
-            echo -e "\t${RED} [601] Network Neighbor Discovery - ARP Scan (T1046/T1016) ${RESET}" #echo -e "\t${RED} [601] ARP Network Scan ${RESET}"
+         echo -e "${BRIGHT_GREEN} [+] INITIAL ACCESS [TA0001] ${RESET}"
+            echo -e "\t${PURPLE} - The adversary is trying to get into your network.${RESET}"
+            echo -e "\t${PURPLE} --- ${RESET}"
+            echo -e "\t${RED} [500] Wireless Access Operations Toolkit (T1669) ${RESET}"
         echo
         #
-        echo -e "${BRIGHT_GREEN} [+] CREDENTIAL ACCESS / COLLECTION ${RESET}"
-            echo -e "\t${RED} [200] Adversary-in-the-Middle Simulation (T1557) ${RESET}" #echo -e "\t${RED} [200] MiTM (Man-in-the-Middle) ${RESET}"
+        echo -e "${BRIGHT_GREEN} [+] EXECUTION [TA0002] ${RESET}"
+            echo -e "\t${PURPLE} - The adversary is trying to run malicious code.${RESET}"
+            echo -e "\t${PURPLE} --- ${RESET}"
         echo
         #
-        echo -e "${BRIGHT_GREEN} [+] PRIVILEGE ESCALATION ${RESET}"
-            echo -e "\t${RED} [302] Local Access Recovery - Root Password Reset Guide ${RESET}" #echo -e "\t${RED} [302] Root Password Reset Guide (Linux OS) ${RESET}"
-            echo -e "\t${RED} [303] Privilege Escalation Enumeration - JALESC ${RESET}" #echo -e "\t${RED} [303] Just Another Linux Escalation Script - JALESC ${RESET}"
-            echo -e "\t${RED} [400] Escape to Shell - Vim Techniques ${RESET}" #echo -e "\t${RED} [400] Vim Escape Techniques (Quick Ref) ${RESET}"
-            echo -e "\t${RED} [401] Escape to Shell - Restricted Bash Techniques ${RESET}" #echo -e "\t${RED} [401] Rbash Escape Techniques (Linux OS)${RESET}"
+        echo -e "${BRIGHT_GREEN} [+] PERSISTENCE [TA0003] ${RESET}"
+            echo -e "\t${PURPLE} - The adversary is trying to maintain their foothold.${RESET}"
+            echo -e "\t${PURPLE} --- ${RESET}"
+        echo  
+        #
+        echo -e "${BRIGHT_GREEN} [+] PRIVILEGE ESCALATION [TA0004] ${RESET}"
+            echo -e "\t${PURPLE} - The adversary is trying to gain higher-level permissions.${RESET}"
+            echo -e "\t${PURPLE} --- ${RESET}"
+            echo -e "\t${RED} [302] Local Access Recovery - Root Password Reset Guide ${RESET}" 
+            echo -e "\t${RED} [303] Privilege Escalation Enumeration - JALESC ${RESET}"
+            echo -e "\t${RED} [400] Escape to Shell - Vim Techniques ${RESET}" 
+            echo -e "\t${RED} [401] Escape to Shell - Restricted Bash Techniques ${RESET}" 
+        echo
+        # 
+        echo -e "${BRIGHT_GREEN} [+] DEFENSE EVASION [TA0005] ${RESET}"
+            echo -e "\t${PURPLE} - The adversary is trying to avoid being detected.${RESET}"
+            echo -e "\t${PURPLE} --- ${RESET}"
+        echo   
+        #
+        echo -e "${BRIGHT_GREEN} [+] CREDENTIAL ACCESS [TA0006] ${RESET}"
+            echo -e "\t${PURPLE} - The adversary is trying to steal credentials.${RESET}"
+            echo -e "\t${PURPLE} --- ${RESET}"
+            echo -e "\t${RED} [200] Adversary-in-the-Middle (T1557) ${RESET}"
         echo
         #
-        echo -e "${BRIGHT_GREEN} [+] LATERAL MOVEMENT / INTERNAL RECON ${RESET}"
-            echo -e "\t${RED} [602] Internal Recon Agent Deployment ${RESET}"
+        echo -e "${BRIGHT_GREEN} [+] DISCOVERY [TA0007] ${RESET}"
+            echo -e "\t${PURPLE} - The adversary is trying to figure out your environment.${RESET}"
+            echo -e "\t${PURPLE} --- ${RESET}"
+            echo -e "\t${RED} [601] Network Neighbor Discovery - ARP Scan (T1046/T1016) ${RESET}"
+            echo -e "\t${RED} [100] Network Service Discovery - Netcat Port Scan (T1046) ${RESET}"
+            echo -e "\t${RED} [101] Network Service Discovery - Bash Socket Scan (T1046) ${RESET}"
+            echo -e "\t${RED} [600] Network Service Discovery - Nmap Scan (T1046) ${RESET}"
+            echo -e "\t${RED} [108] Service Discovery - HTTP(S) Banner Grabbing (T1046) ${RESET}"
+            echo -e "\t${RED} [203] System Information Discovery - Linux (T1082) ${RESET}" 
+            echo -e "\t${RED} [300] File and Directory Discovery - Attack Surface Review (T1083) ${RESET}" 
+            echo -e "\t${RED} [301] File and Directory Discovery - Quick Reference (T1083) ${RESET}" 
+            echo -e "\t${RED} [201] SMB Service Enumeration ${BRIGHT_RED}(UNSTABLE) ${RESET}"
+        echo   
+        #
+        echo -e "${BRIGHT_GREEN} [+] LATERAL MOVEMENT [TA0008] ${RESET}"
+            echo -e "\t${PURPLE} - The adversary is trying to move through your environment.${RESET}"
+            echo -e "\t${PURPLE} --- ${RESET}"
+        echo
+        #
+        echo -e "${BRIGHT_GREEN} [+] COLLECTION [TA0009] ${RESET}"
+            echo -e "\t${PURPLE} - The adversary is trying to gather data of interest to their goal.${RESET}"
+            echo -e "\t${PURPLE} --- ${RESET}"
+        echo
+        #
+        echo -e "${BRIGHT_GREEN} [+] COMMAND AND CONTROL [TA0011] ${RESET}"
+            echo -e "\t${PURPLE} - The adversary is trying to communicate with compromised systems to control them.${RESET}"
+            echo -e "\t${PURPLE} --- ${RESET}"
+        echo
+        #
+        echo -e "${BRIGHT_GREEN} [+] EXFILTRATION [TA0010] ${RESET}"
+            echo -e "\t${PURPLE} - The adversary is trying to steal data.${RESET}"
+            echo -e "\t${PURPLE} --- ${RESET}"
+        echo
+        #
+        echo -e "${BRIGHT_GREEN} [+] IMPACT [TA0011] ${RESET}"
+            echo -e "\t${PURPLE} - The adversary is trying to manipulate, interrupt, or destroy your systems and data.${RESET}"
+            echo -e "\t${PURPLE} --- ${RESET}"
         echo
         #
         echo -e "${GRAY} [+] OPERATOR UTILITIES ${RESET}"
@@ -471,8 +530,6 @@ RELEASE="VADER"
                 303) jalesc ;;                  # Privilege Escalation Enumeration - JALESC
                 400) vim_quick_reference ;;     # Escape to Shell - Vim Techniques
                 401) rbash_escape_methods ;;    # Escape to Shell - Restricted Bash Techniques
-            #* [+] LATERAL MOVEMENT / INTERNAL RECON
-                602) arp_recon_daemon ;;        # Internal Recon Agent Deployment
             #* [+] OPERATOR UTILITIES
                 202) useful_linux_commands ;;   # Network Commands - Quick Reference
                 501) windows_basic_commands ;;  # Windows Commands - Quick Reference
@@ -486,13 +543,13 @@ RELEASE="VADER"
         function validate_input() {
             local input="$1"
             local valid_options=(
-                                $(seq 1 1) # [+] MISC
-                                $(seq 100 110) # [+] INTELLIGENCE GATHERING (RECON & OSINT)
-                                $(seq 200 203) # [+] VULNERABILITY ANALYSIS
-                                $(seq 300 303) # [+] EXPLOITATION & PRIVILEGE ESCALATION
-                                $(seq 400 401) # [+] POST-EXPLOITATION & PERSISTENCE
-                                $(seq 500 501) # [+] NETWORK & SYSTEM EXPLOITATION
-                                $(seq 600 602) # [+] LATERAL MOVEMENT & NETWORK DISCOVERY
+                                $(seq 1 1)       # [+] OPERATOR UTILITIES (Enable WSL Routing)
+                                $(seq 100 110)   # [+] RECONNAISSANCE / RESOURCE DEVELOPMENT / DISCOVERY
+                                $(seq 200 203)   # [+] CREDENTIAL ACCESS / COLLECTION / DISCOVERY
+                                $(seq 300 303)   # [+] DISCOVERY / PRIVILEGE ESCALATION
+                                $(seq 400 401)   # [+] PRIVILEGE ESCALATION (Escape to Shell)
+                                $(seq 500 501)   # [+] RESOURCE DEVELOPMENT / OPERATOR UTILITIES
+                                $(seq 600 602)   # [+] DISCOVERY / LATERAL MOVEMENT / INTERNAL RECON
                                 )  # Create a list of valid options
             valid_options=("${valid_options[@]}")
             for valid in "${valid_options[@]}"; do
@@ -741,27 +798,6 @@ RELEASE="VADER"
             exit_to_main_menu
         }
         main_http_header_grabber
-    }
-    # Function: Deploy ARP Recon Daemon (Base64 Decoded)
-    function deploy_arp_recon_daemon() {
-        local target_dir="/mnt"
-        local daemon_file="${target_dir}/arp_recon_daemon.sh"
-        
-        # Ensure target directory exists
-        mkdir -p "$target_dir"
-
-        # Base64-encoded ARP Recon Daemon
-        local base64_script="<PASTE YOUR BASE64 ENCODED CONTENT HERE>"
-
-        # Decode and write the script back
-        echo "$base64_script" | base64 -d > "$daemon_file"
-        
-        # Set permissions
-        chmod +x "$daemon_file"
-
-        echo "[+] ARP Recon Daemon deployed to: $daemon_file"
-        echo "[*] Configure NETWORK_RANGE, INTERFACE, and other settings before running."
-        echo "[*] To start manually, use: $daemon_file &"
     }
     # Function: Perform DNS Zone Transfer for reconnaissance
     function dns_zt() {

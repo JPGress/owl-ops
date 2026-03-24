@@ -1,0 +1,43 @@
+
+cd <dir>     # Change directory.
+
+cd ..        # Move up one directory level.
+
+mkdir <dir>  # Create a directory.
+
+rmdir /s <dir> # Delete a directory (recursive).
+
+del <file>   # Delete a file.
+
+move <src> <dst> # Move or rename a file/directory.
+
+=== File Search & Enumeration ===
+
+dir /s /b *pass* == *cred* == *config*  # Find sensitive files.
+
+findstr /spin /c:"password" *.* 2>nul  # Search for credentials.
+
+=== Process Management ===
+
+tasklist     # List running processes.
+
+tasklist /M  # Show DLLs used by each process.
+
+taskkill /PID <pid> /F # Terminate a process.
+
+=== User Management ===
+
+net user     # List local users.
+
+net user <user> /active:yes  # Enable a user account.
+
+net user <user> <password>   # Change user password.
+
+=== Network & Firewall ===
+
+netstat -ano  # Show active connections & listening ports.
+
+netsh advfirewall show currentprofile  # Check firewall status.
+
+netsh advfirewall set allprofiles state off  # Disable Windows Firewall.
+
