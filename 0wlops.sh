@@ -87,7 +87,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="1.27.021"
+VERSION="1.27.030"
 # Darth Release
 RELEASE="VADER"
 #* ====== CONSTANTS ======
@@ -2479,290 +2479,290 @@ RELEASE="VADER"
     }
     # Function: Perform metadata analysis for files on specific domains
     function metadata_analysis() {
-        # Metadata Analysis - Perform metadata analysis for files on specific domains
-            # 101) metadata_analysis    
-            # ==============================================================================
-            # Metadata Analysis
-            # Version: 1.2 (2024-01-25)
-            # Author: R3v4N|0wL (jpgress@gmail.com)
-            #
-            # Description:
-            # This script automates the process of performing metadata analysis on files
-            #
-            # Description:
-            # This function automates the process of performing metadata analysis on files 
-            # retrieved from specified domains or websites. It performs the following steps:
-            # 1. Prompts the user for domain, file type, and an optional keyword for filtering.
-            # 2. Searches Google for URLs of the specified file type and downloads the files.
-            # 3. Extracts metadata fields (e.g., Author, Producer, Creator, MIME Type) using `exiftool`.
-            # 4. Organizes and summarizes the metadata into an easy-to-read format and exports to CSV.
-            # 5. Handles common errors like empty results or failed downloads to ensure a robust workflow.
-            #
-            # Dependencies:
-            # - `lynx`: Used for performing Google searches.
-            # - `wget`: Used for downloading files from the URLs found in the search results.
-            # - `exiftool`: Used for extracting metadata from downloaded files.
-            # - `grep`: Used for filtering and processing search results and metadata.
-            #
-            # Notes:
-            # - Ensure all dependencies are installed and accessible in your `$PATH`.
-            # - The function saves intermediate and final results to timestamped files and folders.
-            # - Random user-agent rotation is implemented for downloads to avoid detection.
-            #
-            # Example Usage:
-            # - Input:
-            #     Domain: `businesscorp.com.br`
-            #     File type: `pdf`
-            #     Keyword: `employee`
-            # - Output:
-            #     - Search results in `TIMESTAMP_filtered.txt`
-            #     - Downloaded files in `DOMAIN_TIMESTAMP/`
-            #     - Metadata summary in `DOMAIN_TIMESTAMP_metadata_summary.txt`
-            #     - Organized summary in `DOMAIN_TIMESTAMP_organized_metadata_summary.txt`
-            #     - Metadata CSV in `DOMAIN_TIMESTAMP_metadata_summary.csv`
-            #
-            # Version History:
-            # - 1.0 (2025-01-24): Initial implementation of metadata analysis workflow.
-            # - 1.1 (2025-01-25): Improved error handling, user-agent rotation, and metadata processing.
-            # - 1.2 (2025-01-25): Added structured output (CSV and organized summary) and validation.
-            #
-            # Author: R3v4N (w/ GPT assistance)
-            # ==============================================================================
+        # metadata_analysis — [101] Gather Victim Identity Information (T1589 / T1592)
+        # ============================================================================
+        # Description:
+        #   Searches Google for public files on a target domain, downloads them, and
+        #   extracts metadata (Author, Creator, Producer, Software) using exiftool.
+        #   Results are saved to ./logs/ as a plain summary, an organized report,
+        #   and a CSV for further processing.
+        #
+        # Dependencies: lynx, wget, exiftool
+        # Author: R3v4N (w/ GPT) | Version: 2.0 (2026-03-24)
+        # ============================================================================
 
-        # This script sets the SEARCH variable to use the 'lynx' command-line web browser.
-        # The 'lynx' command is configured with the following options:
-        # -dump: Outputs the formatted document to standard output.
-        # -hiddenlinks=merge: Merges hidden links into the document.
-        # -force_html: Forces the document to be interpreted as HTML.
-        SEARCH="lynx -dump -hiddenlinks=merge -force_html"
-        
-        # Function to prompt the user for required input
-        function metadata_analysis_menu() {
-            clear;  # Clears the terminal screen to give a clean interface
-            ascii_banner_art;  # Displays a banner or logo at the top of the screen
-            
-            # Display the title of this analysis step with colored formatting
-            echo -e "${MAGENTA} 4 - Metadata Analysis ${RESET}"
-            
-            break_line;  # Displays a break_line or additional details about the script
+        local title="Metadata Analysis — Document Intelligence (T1589/T1592)"
+        local LOG_DIR="./logs"
+        local SEARCH_CMD="lynx -dump -hiddenlinks=merge -force_html"
+        local USER_AGENTS=(
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0 Safari/537.36"
+            "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:120.0) Gecko/20100101 Firefox/120.0"
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_0) AppleWebKit/537.36 Chrome/118.0 Safari/537.36"
+            "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 Chrome/120.0 Mobile Safari/537.36"
+        )
 
-            # Prompt the user to enter the domain or website they want to analyze (e.g., government or business domains)
-            echo -n " Enter the domain or extension to search (e.g., businesscorp.com.br): "
-            read -r SITE  # Read the user's input and store it in the SITE variable
-
-            # Prompt the user to enter the file type they want to search for (e.g., PDFs, DOCX)
-            echo -n " Enter the file extension to search for (e.g., pdf): "
-            read -r FILE  # Read the user's input and store it in the FILE variable
-
-            # Prompt the user to optionally specify a keyword to refine the search (e.g., specific topics or terms)
-            echo -n " [Optional] Enter a keyword to refine the search (e.g., user): "
-            read -r KEYWORD  # Read the user's input and store it in the KEYWORD variable
+        # ── Step 0: Check dependencies ──────────────────────────────────────────────
+        function meta_check_deps() {
+            local missing=()
+            for dep in lynx wget exiftool; do
+                command -v "$dep" &>/dev/null || missing+=("$dep")
+            done
+            if [[ ${#missing[@]} -gt 0 ]]; then
+                echo -e "${RED} [!] Missing dependencies: ${missing[*]} ${RESET}"
+                echo -e "${YELLOW} [*] Install with: sudo apt install ${missing[*]} ${RESET}"
+                return 1
+            fi
         }
 
+        # ── Step 1: Banner + user input ─────────────────────────────────────────────
+        function meta_get_input() {
+            display_banner_inside_functions
+            echo -e "${MAGENTA} [101] Metadata Analysis — Document Intelligence ${RESET}"
+            break_line
 
-        function perform_search() {
-            # Helper function to log search results
-            function log_results() {
-                local file="$1"
-                if [[ -s "$file" ]]; then
-                    echo -e "${GREEN} Search successful. Results saved to $file ${RESET}"
-                else
-                    echo -e "${RED} No results found for the specified search criteria. ${RESET}"
-                    local raw_results_file="raw_results_${TIMESTAMP}.txt"
-                    echo -e "${RED} Raw search results saved to ${YELLOW}$raw_results_file ${RESET}"
-                    mv "$file" "$raw_results_file"  # Save the empty file as raw results for debugging
-                fi
+            echo -e "${YELLOW} ⚠  DISCLAIMER ${RESET}"
+            echo -e "${GRAY}    In 2025/2026, major search engines (Google, Bing, DuckDuckGo) actively${RESET}"
+            echo -e "${GRAY}    detect and block headless scrapers that lack a real browser session.${RESET}"
+            echo -e "${GRAY}    If this module returns no results, it is likely due to:${RESET}"
+            echo -e "${GRAY}      • Rate-limiting or bot-blocking on your current IP${RESET}"
+            echo -e "${GRAY}      • The target domain having no indexed files of that type${RESET}"
+            echo -e "${GRAY}      • The search engine requiring JavaScript (not supported here)${RESET}"
+            echo -e "${GRAY}    In that case, the exact search URL will be displayed so you can${RESET}"
+            echo -e "${GRAY}    run the query manually in your browser and supply the URLs yourself.${RESET}"
+            break_line
+
+            echo -ne "${GREEN} [?] Target domain (e.g. company.com): ${RESET}"
+            read -r TARGET_SITE
+            echo -ne "${GREEN} [?] File type to search (e.g. pdf, docx, xlsx): ${RESET}"
+            read -r TARGET_FILETYPE
+            echo -ne "${GRAY} [?] Optional keyword to refine search (press ENTER to skip): ${RESET}"
+            read -r TARGET_KEYWORD
+
+            if [[ -z "$TARGET_SITE" || -z "$TARGET_FILETYPE" ]]; then
+                echo -e "${RED} [!] Domain and file type are required. Aborting. ${RESET}"
+                return 1
+            fi
+        }
+
+        # ── Step 2: Setup output paths ───────────────────────────────────────────────
+        function meta_setup_paths() {
+            local ts; ts=$(date +%Y%m%d_%H%M%S)
+            local slug="${TARGET_SITE}_${TARGET_FILETYPE}_${ts}"
+
+            mkdir -p "$LOG_DIR"
+
+            URLS_FILE="${LOG_DIR}/${slug}_urls.txt"
+            DOWNLOAD_DIR="${LOG_DIR}/${slug}_files"
+            METADATA_RAW="${LOG_DIR}/${slug}_metadata_raw.txt"
+            METADATA_REPORT="${LOG_DIR}/${slug}_metadata_report.txt"
+            METADATA_CSV="${LOG_DIR}/${slug}_metadata.csv"
+        }
+
+        # ── Step 3: OSINT search for file URLs (multi-engine with fallback) ──────────
+        function meta_search() {
+            local dork="${TARGET_SITE}+filetype:${TARGET_FILETYPE}"
+            [[ -n "$TARGET_KEYWORD" ]] && dork+="+intext:${TARGET_KEYWORD}"
+
+            local ua="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+            local cookie_jar="/tmp/meta_cookies_$$.txt"
+            local raw_html="/tmp/meta_raw_$$.html"
+
+            echo -e "\n${CYAN} [1/5] Searching for .${TARGET_FILETYPE} files on ${TARGET_SITE}... ${RESET}"
+
+            # Helper: extract and clean URLs from HTML
+            function _extract_urls() {
+                local html="$1"
+                # Pattern 1: Google /url?q=<encoded_url> redirect links
+                grep -oP '/url\?q=\K[^&]+' "$html" \
+                    | python3 -c "import sys,urllib.parse; [print(urllib.parse.unquote(l.strip())) for l in sys.stdin]" \
+                    | grep -iE "\.${TARGET_FILETYPE}$" \
+                    | grep -iv "google\|goo\.gl\|youtube"
+
+                # Pattern 2: Direct href links to target filetype
+                grep -oP 'href="https?://[^"]*\.'"${TARGET_FILETYPE}"'"' "$html" \
+                    | sed 's/href="//; s/"//' \
+                    | grep -iv "google\|bing\|duckduckgo\|microsoft"
             }
 
-            # Generate the timestamp and file names
-            TIMESTAMP=$(date +%d%H%M%b%Y)
-            FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
+            # Engine 1: Google
+            local google_url="https://www.google.com/search?q=inurl:${dork}&num=20&hl=pt-BR"
+            echo -e "${GRAY}   [*] Engine: Google ${RESET}"
+            curl -s -L \
+                -A "$ua" \
+                -H "Accept: text/html,application/xhtml+xml" \
+                -H "Accept-Language: pt-BR,pt;q=0.9,en;q=0.8" \
+                -H "Referer: https://www.google.com/" \
+                -b "$cookie_jar" -c "$cookie_jar" \
+                "$google_url" > "$raw_html" 2>/dev/null
+            _extract_urls "$raw_html" | sort -u > "$URLS_FILE"
 
-            # Build the search query
-            local base_query="https://www.google.com/search?q=inurl:$SITE+filetype:$FILE"
-            if [[ -n "$KEYWORD" ]]; then
-                echo -e "${MAGENTA} Searching for $FILE files with \"$KEYWORD\" on $SITE... ${RESET}"
-                base_query+="+intext:$KEYWORD"
-            else
-                echo -e "${MAGENTA} Searching for $FILE files on $SITE... ${RESET}"
+            # Engine 2: Bing (if Google returned nothing)
+            if [[ ! -s "$URLS_FILE" ]]; then
+                local bing_url="https://www.bing.com/search?q=filetype%3A${TARGET_FILETYPE}+site%3A${TARGET_SITE}&count=20"
+                echo -e "${GRAY}   [*] Fallback: Bing ${RESET}"
+                curl -s -L -A "$ua" \
+                    -H "Accept: text/html" \
+                    -H "Accept-Language: pt-BR,pt;q=0.9" \
+                    "$bing_url" > "$raw_html" 2>/dev/null
+                _extract_urls "$raw_html" | sort -u > "$URLS_FILE"
             fi
 
-            # Perform the search and filter results
-            echo ""
-            $SEARCH "$base_query" \
-                | grep -Eo 'https?://[^ ]+\.'"$FILE" \
-                | cut -d '=' -f2'' > "$FILTERED_RESULTS_FILE"
+            # Engine 3: DuckDuckGo Lite (final fallback)
+            if [[ ! -s "$URLS_FILE" ]]; then
+                local ddg_url="https://html.duckduckgo.com/html/?q=filetype%3A${TARGET_FILETYPE}+site%3A${TARGET_SITE}"
+                echo -e "${GRAY}   [*] Fallback: DuckDuckGo Lite ${RESET}"
+                curl -s -L -A "$ua" \
+                    -H "Accept: text/html" \
+                    "$ddg_url" > "$raw_html" 2>/dev/null
+                _extract_urls "$raw_html" | sort -u > "$URLS_FILE"
+            fi
 
-            # Log the results
-            log_results "$FILTERED_RESULTS_FILE"
-        }       
-        
-        # Function to download files from the search results
-        function download_files() {
-            USER_AGENTS=(
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.5414.119 Safari/537.36"
-                "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/109.0"
-                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.5359.124 Safari/537.36"
-                "Mozilla/5.0 (Linux; Android 11; Pixel 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.5414.119 Mobile Safari/537.36"
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.5414.119 Safari/537.36 Edg/109.0.774.68"
-            )
+            rm -f "$raw_html" "$cookie_jar"
 
-            FILE_LIST="$1"
-            FOLDER="${SITE}_${TIMESTAMP}"
-            mkdir -p "$FOLDER"
-            FAILED_DOWNLOADS=0
+            local count=0
+            [[ -f "$URLS_FILE" ]] && count=$(wc -l < "$URLS_FILE")
+            if [[ "$count" -eq 0 ]]; then
+                echo -e "${RED} [!] No URLs found across all search engines. ${RESET}"
+                echo -e "${YELLOW} [*] Possible causes: ${RESET}"
+                echo -e "${YELLOW}     - Google/Bing rate-limiting this IP ${RESET}"
+                echo -e "${YELLOW}     - Domain has no indexed .${TARGET_FILETYPE} files ${RESET}"
+                echo -e "${YELLOW}     - All engines required JavaScript (blocked bot) ${RESET}"
+                echo -e "${GRAY} [→] Try manually in a browser: ${google_url} ${RESET}"
+                return 1
+            fi
+            echo -e "${GREEN} [+] Found ${count} URL(s) → ${URLS_FILE} ${RESET}"
+        }
 
-            while IFS= read -r URL; do
-                RANDOM_USER_AGENT="${USER_AGENTS[RANDOM % ${#USER_AGENTS[@]}]}"
-                echo -e "${MAGENTA} ==========================================================================${RESET}"
-                echo -e "${MAGENTA} Downloading file with ${RANDOM_USER_AGENT} ${RESET}"
-                wget --user-agent="$RANDOM_USER_AGENT" -P "$FOLDER" "$URL"
+        # ── Step 4: Download files ───────────────────────────────────────────────────
+        function meta_download() {
+            mkdir -p "$DOWNLOAD_DIR"
+            local total; total=$(wc -l < "$URLS_FILE")
+            local i=0 failed=0
 
-                # Check if the file was successfully downloaded
-                if [[ $? -ne 0 ]]; then
-                    echo -e "${RED} Failed to download: $URL ${RESET}"
-                    ((FAILED_DOWNLOADS++))
+            echo -e "\n${CYAN} [2/5] Downloading ${total} file(s) to ${DOWNLOAD_DIR}/ ${RESET}"
+
+            while IFS= read -r url; do
+                ((i++))
+                local agent="${USER_AGENTS[RANDOM % ${#USER_AGENTS[@]}]}"
+                echo -e "${GRAY}   [${i}/${total}] ${url} ${RESET}"
+                if ! wget -q --user-agent="$agent" -P "$DOWNLOAD_DIR" "$url" 2>/dev/null; then
+                    echo -e "${RED}   [!] Failed: ${url} ${RESET}"
+                    ((failed++))
                 fi
-                echo -e "${MAGENTA} ==========================================================================${RESET}"
-            done < "$FILE_LIST"
+            done < "$URLS_FILE"
 
-            rm -f "$FILE_LIST"  # Clean up the temporary results file
+            local downloaded=$(( total - failed ))
+            echo -e "${GREEN} [+] Downloaded: ${downloaded}/${total} | Failed: ${failed} ${RESET}"
 
-            if [[ $FAILED_DOWNLOADS -gt 0 ]]; then
-                echo -e "${YELLOW} Warning: $FAILED_DOWNLOADS files failed to download. ${RESET}"
-            fi
-        }
-
-        # Function to extract metadata for Author, Producer, Creator, and MIME Type
-        function extract_metadata_summary() {
-            FOLDER="${SITE}_${TIMESTAMP}"
-            METADATA_FILE="${FOLDER}_metadata_summary.txt"
-            echo -e "${MAGENTA} Extracting metadata from files in: $FOLDER ${RESET}"
-
-            # Check if folder contains files
-            if [[ -z "$(ls -A "$FOLDER")" ]]; then
-                echo -e "${RED} No files found in $FOLDER to extract metadata. ${RESET}"
-                echo -e "${GRAY} Returning to main menu.${RESET}"
+            if [[ "$downloaded" -eq 0 ]]; then
+                echo -e "${RED} [!] No files downloaded. Cannot extract metadata. ${RESET}"
                 return 1
             fi
-
-            # Initialize the metadata summary file
-            echo -e "Metadata Summary for $SITE - Generated on $(date)\n" > "$METADATA_FILE"
-
-            # Use exiftool to extract metadata and filter relevant fields
-            exiftool "$FOLDER"/* | grep -E "^(Author|Producer|Creator|MIME Type)" >> "$METADATA_FILE"
-
-            if [[ -s "$METADATA_FILE" ]]; then
-                echo -e "${GREEN} Metadata summary saved to: $METADATA_FILE ${RESET}"
-            else
-                echo -e "${RED} No metadata extracted. Metadata file is empty. ${RESET}"
-            fi
         }
 
-        # Function to process, organize, and export metadata
-        function process_metadata_summary() {
-            FOLDER="${SITE}_${TIMESTAMP}"
-            METADATA_FILE="${FOLDER}_metadata_summary.txt"
-            ORGANIZED_METADATA_FILE="${FOLDER}_organized_metadata_summary.txt"
-            CSV_FILE="${FOLDER}_metadata_summary.csv"
+        # ── Step 5: Extract raw metadata ─────────────────────────────────────────────
+        function meta_extract() {
+            echo -e "\n${CYAN} [3/5] Extracting metadata with exiftool... ${RESET}"
+            {
+                echo "Metadata Raw Extract — ${TARGET_SITE} — $(date)"
+                echo "================================================================"
+                exiftool "$DOWNLOAD_DIR"/* 2>/dev/null \
+                    | grep -E "^(File Name|Author|Creator|Producer|Creator Tool|Software|MIME Type|Create Date|Modify Date)"
+            } > "$METADATA_RAW"
 
-            echo -e "${MAGENTA} Processing and organizing metadata for: $METADATA_FILE ${RESET}"
-
-            # Initialize the organized metadata file
-            echo -e "Organized Metadata Summary for $SITE - Generated on $(date)\n" > "$ORGANIZED_METADATA_FILE"
-
-            # Initialize the CSV file with headers
-            echo "Type,Value,Count" > "$CSV_FILE"
-
-            # Group by software (Creator Tool and Producer)
-            echo -e "=== Software Used (Creator Tool and Producer) ===\n" >> "$ORGANIZED_METADATA_FILE"
-            grep -E "^(Creator Tool|Producer)" "$METADATA_FILE" | sort | uniq -c | sort -nr | while read -r COUNT FIELD VALUE; do
-                echo "$FIELD,$VALUE,$COUNT" >> "$CSV_FILE" # Add to CSV
-                printf "%-30s : %s (%s occurrences)\n" "$FIELD" "$VALUE" "$COUNT" >> "$ORGANIZED_METADATA_FILE"
-            done
-
-            # Group by persons (Creator and Author)
-            echo -e "\n=== People Found (Creator and Author) ===\n" >> "$ORGANIZED_METADATA_FILE"
-            grep -E "^(Creator|Author)" "$METADATA_FILE" | sort | uniq -c | sort -nr | while read -r COUNT FIELD VALUE; do
-                echo "$FIELD,$VALUE,$COUNT" >> "$CSV_FILE" # Add to CSV
-                printf "%-30s : %s (%s occurrences)\n" "$FIELD" "$VALUE" "$COUNT" >> "$ORGANIZED_METADATA_FILE"
-            done
-
-            echo -e "${GREEN} Organized metadata saved to: $ORGANIZED_METADATA_FILE ${RESET}"
-            echo -e "${GREEN} Metadata CSV saved to: $CSV_FILE ${RESET}"
-
-            # Display summary on the screen
-            echo -e "\n${CYAN}=== Screen Summary ===${RESET}"
-            echo -e "${YELLOW}Top Software Used:${RESET}"
-            grep -E "^(Creator Tool|Producer)" "$METADATA_FILE" | sort | uniq -c | sort -nr | while read -r COUNT FIELD VALUE; do
-                echo "  $FIELD: $VALUE ($COUNT occurrences)"
-            done
-
-            echo -e "\n${YELLOW}Top People Mentioned:${RESET}"
-            grep -E "^(Creator|Author)" "$METADATA_FILE" | sort | uniq -c | sort -nr | while read -r COUNT FIELD VALUE; do
-                echo "  $FIELD: $VALUE ($COUNT occurrences)"
-            done
-        }
-
-        # Function to handle errors for empty results or missing files
-        function handle_empty_results() {
-            local file_to_check="$1"
-            local context_message="$2"
-
-            if [[ ! -f "$file_to_check" ]]; then
-                echo -e "${RED} Error: $context_message - File does not exist. ${RESET}"
-                echo -e "${YELLOW} Please check your search criteria or connection. ${RESET}"
-                echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
-                read -r 2>/dev/null
-                main
+            local lines; lines=$(grep -c . "$METADATA_RAW" 2>/dev/null || echo 0)
+            if [[ "$lines" -le 2 ]]; then
+                echo -e "${RED} [!] No relevant metadata extracted. Files may be empty or unsupported. ${RESET}"
                 return 1
             fi
-
-            if [[ ! -s "$file_to_check" ]]; then
-                echo -e "${RED} Error: $context_message - File is empty. ${RESET}"
-                echo -e "${YELLOW} This usually happens when no results were found or when you got a Google ban! =/ ${RESET}"
-                echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
-                read -r 2>/dev/null
-                main
-                return 1
-            fi
-            return 0  # File exists and is not empty
+            echo -e "${GREEN} [+] Raw metadata → ${METADATA_RAW} (${lines} entries) ${RESET}"
         }
 
-        # Function to handle the entire metadata analysis workflow
-        function run_metadata_analysis() {
-            # Step 1: Prompt user for inputs
-            metadata_analysis_menu
+        # ── Step 6: Process and report ───────────────────────────────────────────────
+        function meta_report() {
+            echo -e "\n${CYAN} [4/5] Building report and CSV... ${RESET}"
 
-            # Step 2: Perform the search and save filtered URLs
-            perform_search
+            # CSV header
+            echo "Category,Value,Occurrences" > "$METADATA_CSV"
 
-            # Step 3: Check and handle filtered results file
-            FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
-            handle_empty_results "$FILTERED_RESULTS_FILE" "Search results for filtered URLs" || return
+            {
+                echo "Metadata Intelligence Report — ${TARGET_SITE}"
+                echo "Generated: $(date)"
+                echo "================================================================"
 
-            # Step 4: Download files
-            download_files "$FILTERED_RESULTS_FILE"
+                echo -e "\n[+] SOFTWARE / TOOLS USED"
+                echo "----------------------------------------------------------------"
+                grep -E "^(Creator Tool|Producer|Software)" "$METADATA_RAW" \
+                    | sed 's/^[^:]*: //' | sort | uniq -c | sort -rn \
+                    | while read -r count val; do
+                        printf "  %-5s  %s\n" "(${count}x)" "$val"
+                        echo "Software,${val},${count}" >> "$METADATA_CSV"
+                    done
 
-            # Step 5: Extract metadata from downloaded files
-            extract_metadata_summary  # This generates METADATA_FILE
+                echo -e "\n[+] PEOPLE IDENTIFIED (Author / Creator)"
+                echo "----------------------------------------------------------------"
+                grep -E "^(Author|Creator) " "$METADATA_RAW" \
+                    | sed 's/^[^:]*: //' | sort | uniq -c | sort -rn \
+                    | while read -r count val; do
+                        printf "  %-5s  %s\n" "(${count}x)" "$val"
+                        echo "Person,${val},${count}" >> "$METADATA_CSV"
+                    done
 
-            # Step 6: Check and handle metadata file
-            METADATA_FILE="${SITE}_${TIMESTAMP}_metadata_summary.txt"
-            handle_empty_results "$METADATA_FILE" "Extracted metadata summary" || return
+                echo -e "\n[+] MIME TYPES"
+                echo "----------------------------------------------------------------"
+                grep "^MIME Type" "$METADATA_RAW" \
+                    | sed 's/^[^:]*: //' | sort | uniq -c | sort -rn \
+                    | while read -r count val; do
+                        printf "  %-5s  %s\n" "(${count}x)" "$val"
+                        echo "MIME,${val},${count}" >> "$METADATA_CSV"
+                    done
 
-            # Step 7: Process metadata and export CSV
-            process_metadata_summary
+                echo -e "\n[+] DATES"
+                echo "----------------------------------------------------------------"
+                grep -E "^(Create Date|Modify Date)" "$METADATA_RAW" \
+                    | sed 's/^[^:]*: //' | sort | uniq \
+                    | while read -r val; do
+                        echo "  $val"
+                    done
 
-            # Final step: Return to main menu
-            echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
-            read -r 2>/dev/null
-            main
+            } > "$METADATA_REPORT"
+
+            echo -e "${GREEN} [+] Report  → ${METADATA_REPORT} ${RESET}"
+            echo -e "${GREEN} [+] CSV     → ${METADATA_CSV} ${RESET}"
         }
 
-        # Ensure main workflow is executed
-        run_metadata_analysis;
+        # ── Step 7: Print summary ────────────────────────────────────────────────────
+        function meta_print_summary() {
+            echo -e "\n${CYAN} [5/5] Summary ${RESET}"
+            echo -e "${BRIGHT_GREEN}"
+            grep -A999 "\[+\] SOFTWARE" "$METADATA_REPORT" | head -20
+            echo -e "${RESET}"
 
+            echo -e "\n${BRIGHT_GREEN} ╔═══════════════════════════════════════════════╗ ${RESET}"
+            echo -e "${BRIGHT_GREEN} ║           Generated Files                     ║ ${RESET}"
+            echo -e "${BRIGHT_GREEN} ╠═══════════════════════════════════════════════╣ ${RESET}"
+            echo -e "${BRIGHT_GREEN} ║ URLs:     ${RESET}${URLS_FILE}"
+            echo -e "${BRIGHT_GREEN} ║ Files:    ${RESET}${DOWNLOAD_DIR}/"
+            echo -e "${BRIGHT_GREEN} ║ Raw:      ${RESET}${METADATA_RAW}"
+            echo -e "${BRIGHT_GREEN} ║ Report:   ${RESET}${METADATA_REPORT}"
+            echo -e "${BRIGHT_GREEN} ║ CSV:      ${RESET}${METADATA_CSV}"
+            echo -e "${BRIGHT_GREEN} ╚═══════════════════════════════════════════════╝ ${RESET}"
+        }
+
+        # ── Workflow ─────────────────────────────────────────────────────────────────
+        function metadata_analysis_workflow() {
+            meta_check_deps   || { exit_to_main_menu; return; }
+            meta_get_input    || { exit_to_main_menu; return; }
+            meta_setup_paths
+            meta_search       || { exit_to_main_menu; return; }
+            meta_download     || { exit_to_main_menu; return; }
+            meta_extract      || { exit_to_main_menu; return; }
+            meta_report
+            meta_print_summary
+            exit_to_main_menu
+        }
+
+        metadata_analysis_workflow
     }
     # Function: Perform a Man-in-the-Middle (MiTM) attack
     function mitm() {
