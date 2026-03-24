@@ -72,7 +72,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="1.27.000"
+VERSION="1.27.010"
 # Darth Release
 RELEASE="VADER"
 #* ====== CONSTANTS ======
@@ -364,47 +364,55 @@ RELEASE="VADER"
 #* ====== MAIN FUNCTION ======
     # Display numbered menu options
     function display_numbered_menu_options() {
-        echo -e "${BRIGHT_GREEN} [+] INTELLIGENCE GATHERING (RECON & OSINT) ${RESET}"
-            echo -e "\t${RED} [100] Portscan (Netcat) ${RESET}" 
-            echo -e "\t${RED} [101] Portscan (Bash sockets) ${RESET}" 
-            echo -e "\t${RED} [102] Google Hacking for OSINT ${RESET}" 
-            echo -e "\t${RED} [103] Metadata Analysis ${RESET}" 
-            echo -e "\t${RED} [104] DNS Zone Transfer ${RESET}" 
-            echo -e "\t${RED} [105] Subdomain Takeover ${RESET}" 
-            echo -e "\t${RED} [106] Reverse DNS Lookup ${RESET}" 
-            echo -e "\t${RED} [107] DNS Reconnaissance ${RESET}"
-            echo -e "\t${RED} [108] HTTP(S) Banner Grabber ${RESET}"
-            echo -e "\t${RED} [109] Whois & DNS Reconnaissance ${RESET}"
-            echo -e "\t${RED} [110] Parsing HTML ${BRIGHT_RED}(DISABLED) ${RESET}"      
+        # This function
+        echo -e "${BRIGHT_GREEN} [+] RECONNAISSANCE ${RESET}"
+            echo -e "\t${RED} [102] Gather Victim Host Information - Search Engines (T1593.001) ${RESET}" #echo -e "\t${RED} [102] Google Hacking for OSINT ${RESET}" 
+            echo -e "\t${RED} [103] Gather Victim Identity Information - Document Metadata (T1589 / T1592) ${RESET}" #echo -e "\t${RED} [103] Metadata Analysis ${RESET}" 
+            echo -e "\t${RED} [106] Gather Victim Network Information - Reverse DNS Lookup (T1590.001) ${RESET}" #echo -e "\t${RED} [106] Reverse DNS Lookup ${RESET}" 
+            echo -e "\t${RED} [107] Gather Victim Network Information - DNS Recon (T1590.001) ${RESET}" #echo -e "\t${RED} [107] DNS Reconnaissance ${RESET}"
+            echo -e "\t${RED} [109] Gather Victim Network Information - Whois & DNS (T1590) ${RESET}" #echo -e "\t${RED} [109] Whois & DNS Reconnaissance ${RESET}"
+            echo -e "\t${RED} [110] Gather Victim Web Presence - HTML Parsing ${BRIGHT_RED} (DISABLED) ${RESET}" #echo -e "\t${RED} [110] Parsing HTML ${BRIGHT_RED}(DISABLED) ${RESET}"      
         echo
-        echo -e "${BRIGHT_GREEN} [+] VULNERABILITY ANALYSIS ${RESET}"
-            echo -e "\t${RED} [200] MiTM (Man-in-the-Middle) ${RESET}"
-            echo -e "\t${RED} [201] SMB Exploration Analysis ${BRIGHT_RED}(Unstable) ${RESET}"
-            echo -e "\t${RED} [202] Useful Network Commands (Quick Ref) ${RESET}"
-            echo -e "\t${RED} [203] System Information (Linux OS) ${RESET}"
+        #
+        echo -e "${BRIGHT_GREEN} [+] RESOURCE DEVELOPMENT / INITIAL ACCESS ${RESET}"
+            echo -e "\t${RED} [104] Exploit Public-Facing Infrastructure - DNS Zone Transfer ${RESET}" #echo -e "\t${RED} [104] DNS Zone Transfer ${RESET}"
+            echo -e "\t${RED} [105] Subdomain Takeover Assessment ${RESET}" #echo -e "\t${RED} [105] Subdomain Takeover ${RESET}" 
+            echo -e "\t${RED} [500] Wireless Access Operations Toolkit ${RESET}" #echo -e "\t${RED} [500] Wireless Penetration Testing Toolkit ${RESET}"
         echo
-        echo -e "${BRIGHT_GREEN} [+] EXPLOITATION & PRIVILEGE ESCALATION ${RESET}"
-            echo -e "\t${RED} [300] Attack Surface Analysis (find Based) ${RESET}"
-            echo -e "\t${RED} [301] File Discovery & Enumeration (Quick Ref) ${RESET}"
-            echo -e "\t${RED} [302] Root Password Reset Guide (Linux OS) ${RESET}"
-            echo -e "\t${RED} [303] Just Another Linux Escalation Script - JALESC ${RESET}"
+        #
+        echo -e "${BRIGHT_GREEN} [+] DISCOVERY ${RESET}"
+            echo -e "\t${RED} [100] Network Service Discovery - Netcat Port Scan (T1046) ${RESET}" #echo -e "\t${RED} [100] Portscan (Netcat) ${RESET}"
+            echo -e "\t${RED} [101] Network Service Discovery - Bash Socket Scan (T1046) ${RESET}" #echo -e "\t${RED} [101] Portscan (Bash sockets) ${RESET}"
+            echo -e "\t${RED} [108] Service Discovery - HTTP(S) Banner Grabbing (T1046) ${RESET}" #echo -e "\t${RED} [108] HTTP(S) Banner Grabber ${RESET}"
+            echo -e "\t${RED} [201] SMB Service Enumeration ${BRIGHT_RED}(UNSTABLE) ${RESET}" #echo -e "\t${RED} [201] SMB Exploration Analysis ${BRIGHT_RED}(Unstable) ${RESET}"
+            echo -e "\t${RED} [203] System Information Discovery - Linux (T1082) ${RESET}" #echo -e "\t${RED} [203] System Information (Linux OS) ${RESET}"
+            echo -e "\t${RED} [300] File and Directory Discovery - Attack Surface Review (T1083) ${RESET}" #echo -e "\t${RED} [300] Attack Surface Analysis (find Based) ${RESET}"
+            echo -e "\t${RED} [301] File and Directory Discovery - Quick Reference (T1083) ${RESET}" #echo -e "\t${RED} [301] File Discovery & Enumeration (Quick Ref) ${RESET}"
+            echo -e "\t${RED} [600] Network Service Discovery - Nmap Scan (T1046) ${RESET}" #echo -e "\t${RED} [600] Nmap Network Scan ${RESET}"
+            echo -e "\t${RED} [601] Network Neighbor Discovery - ARP Scan (T1046/T1016) ${RESET}" #echo -e "\t${RED} [601] ARP Network Scan ${RESET}"
         echo
-        echo -e "${BRIGHT_GREEN} [+] POST-EXPLOITATION & PERSISTENCE ${RESET}"
-            echo -e "\t${RED} [400] Vim Escape Techniques (Quick Ref) ${RESET}"
-            echo -e "\t${RED} [401] Rbash Escape Techniques (Linux OS)${RESET}"
+        #
+        echo -e "${BRIGHT_GREEN} [+] CREDENTIAL ACCESS / COLLECTION ${RESET}"
+            echo -e "\t${RED} [200] Adversary-in-the-Middle Simulation (T1557) ${RESET}" #echo -e "\t${RED} [200] MiTM (Man-in-the-Middle) ${RESET}"
         echo
-        echo -e "${BRIGHT_GREEN} [+] NETWORK & SYSTEM EXPLOITATION ${RESET}"
-            echo -e "\t${RED} [500] Wireless Penetration Testing Toolkit ${RESET}"
-            echo -e "\t${RED} [501] Windows Basic Commands (Quick Ref) ${RESET}"
+        #
+        echo -e "${BRIGHT_GREEN} [+] PRIVILEGE ESCALATION ${RESET}"
+            echo -e "\t${RED} [302] Local Access Recovery - Root Password Reset Guide ${RESET}" #echo -e "\t${RED} [302] Root Password Reset Guide (Linux OS) ${RESET}"
+            echo -e "\t${RED} [303] Privilege Escalation Enumeration - JALESC ${RESET}" #echo -e "\t${RED} [303] Just Another Linux Escalation Script - JALESC ${RESET}"
+            echo -e "\t${RED} [400] Escape to Shell - Vim Techniques ${RESET}" #echo -e "\t${RED} [400] Vim Escape Techniques (Quick Ref) ${RESET}"
+            echo -e "\t${RED} [401] Escape to Shell - Restricted Bash Techniques ${RESET}" #echo -e "\t${RED} [401] Rbash Escape Techniques (Linux OS)${RESET}"
         echo
-        echo -e "${BRIGHT_GREEN} [+] LATERAL MOVEMENT & NETWORK DISCOVERY ${RESET}"
-            echo -e "\t${RED} [600] Nmap Network Scan ${RESET}"
-            echo -e "\t${RED} [601] ARP Network Scan ${RESET}"
-            echo -e "\t${RED} [602] Deploy ARP Recon Agent ${RESET}"
+        #
+        echo -e "${BRIGHT_GREEN} [+] LATERAL MOVEMENT / INTERNAL RECON ${RESET}"
+            echo -e "\t${RED} [602] Internal Recon Agent Deployment ${RESET}"
         echo
-        echo -e "${GRAY} [+] MISC ${RESET}"
+        #
+        echo -e "${GRAY} [+] OPERATOR UTILITIES ${RESET}"
+            echo -e "\t${GRAY} [202] Network Commands - Quick Reference ${RESET}"
+            echo -e "\t${GRAY} [501] Windows Commands - Quick Reference ${RESET}"
+            echo -e "\t${GRAY} [001] Enable WSL Routing to VirtualBox VM ${RESET}"
             echo -e "\t${GRAY} [000] Exit ${RESET}"
-            echo -e "\t${GRAY} [001] Enable WSL routing to VM VBox ${RESET}"
+        echo
         echo -e "${RED}+=========================== ${BRIGHT_GREEN}We Hunt in the Shadows${RESET}${RED} ================================+${RESET}"
     }
 
