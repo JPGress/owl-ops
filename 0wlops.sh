@@ -2594,6 +2594,7 @@ RELEASE="VADER"
         # ── Step 4: Operator Manual Download ─────────────────────────────────────────
         function meta_download() {
             mkdir -p "$DOWNLOAD_DIR"
+            chmod 777 "$DOWNLOAD_DIR"
             
             echo -e "\n${CYAN} [2/5] Manual Download Phase ${RESET}"
             echo -e "${YELLOW}   [1] The search queries have been opened in your browser. ${RESET}"
