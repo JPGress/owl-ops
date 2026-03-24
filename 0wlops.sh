@@ -2558,106 +2558,61 @@ RELEASE="VADER"
             METADATA_CSV="${LOG_DIR}/${slug}_metadata.csv"
         }
 
-        # ── Step 3: OSINT search for file URLs (multi-engine with fallback) ──────────
+        # ── Step 3: Open Search Queries in Browser ──────────────────────────────────
         function meta_search() {
+            local search_browser="firefox" # Tenta usar firefox por padrão
             local dork="${TARGET_SITE}+filetype:${TARGET_FILETYPE}"
             [[ -n "$TARGET_KEYWORD" ]] && dork+="+intext:${TARGET_KEYWORD}"
 
-            local ua="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
-            local cookie_jar="/tmp/meta_cookies_$$.txt"
-            local raw_html="/tmp/meta_raw_$$.html"
+            local google_url="https://www.google.com/search?q=inurl:${dork}&num=20&hl=pt-BR"
+            local bing_url="https://www.bing.com/search?q=filetype%3A${TARGET_FILETYPE}+site%3A${TARGET_SITE}&count=20"
 
-            echo -e "\n${CYAN} [1/5] Searching for .${TARGET_FILETYPE} files on ${TARGET_SITE}... ${RESET}"
-
-            # Helper: extract and clean URLs from HTML
-            function _extract_urls() {
-                local html="$1"
-                # Pattern 1: Google /url?q=<encoded_url> redirect links
-                grep -oP '/url\?q=\K[^&]+' "$html" \
-                    | python3 -c "import sys,urllib.parse; [print(urllib.parse.unquote(l.strip())) for l in sys.stdin]" \
-                    | grep -iE "\.${TARGET_FILETYPE}$" \
-                    | grep -iv "google\|goo\.gl\|youtube"
-
-                # Pattern 2: Direct href links to target filetype
-                grep -oP 'href="https?://[^"]*\.'"${TARGET_FILETYPE}"'"' "$html" \
-                    | sed 's/href="//; s/"//' \
-                    | grep -iv "google\|bing\|duckduckgo\|microsoft"
+            echo -e "\n${CYAN} [1/5] Opening queries in browser... ${RESET}"
+            
+            # Helper to open URL securely
+            function _open_url() {
+                local url="$1"
+                if command -v proxychains4 >/dev/null 2>&1 && command -v "$search_browser" >/dev/null 2>&1; then
+                    echo -e "${GRAY}   [+] Launching $search_browser via proxychains4 for: ${url} ${RESET}"
+                    proxychains4 "$search_browser" "$url" 2>/dev/null &
+                elif command -v "$search_browser" >/dev/null 2>&1; then
+                    echo -e "${GRAY}   [+] Launching $search_browser for: ${url} ${RESET}"
+                    "$search_browser" "$url" 2>/dev/null &
+                elif command -v xdg-open >/dev/null 2>&1; then
+                    echo -e "${GRAY}   [+] Launching default browser for: ${url} ${RESET}"
+                    xdg-open "$url" 2>/dev/null &
+                else
+                    echo -e "${YELLOW}   [!] No browser found. Please open manually: ${url} ${RESET}"
+                fi
+                sleep 2 # Dá tempo para a aba abrir antes da próxima
             }
 
-            # Engine 1: Google
-            local google_url="https://www.google.com/search?q=inurl:${dork}&num=20&hl=pt-BR"
-            echo -e "${GRAY}   [*] Engine: Google ${RESET}"
-            curl -s -L \
-                -A "$ua" \
-                -H "Accept: text/html,application/xhtml+xml" \
-                -H "Accept-Language: pt-BR,pt;q=0.9,en;q=0.8" \
-                -H "Referer: https://www.google.com/" \
-                -b "$cookie_jar" -c "$cookie_jar" \
-                "$google_url" > "$raw_html" 2>/dev/null
-            _extract_urls "$raw_html" | sort -u > "$URLS_FILE"
-
-            # Engine 2: Bing (if Google returned nothing)
-            if [[ ! -s "$URLS_FILE" ]]; then
-                local bing_url="https://www.bing.com/search?q=filetype%3A${TARGET_FILETYPE}+site%3A${TARGET_SITE}&count=20"
-                echo -e "${GRAY}   [*] Fallback: Bing ${RESET}"
-                curl -s -L -A "$ua" \
-                    -H "Accept: text/html" \
-                    -H "Accept-Language: pt-BR,pt;q=0.9" \
-                    "$bing_url" > "$raw_html" 2>/dev/null
-                _extract_urls "$raw_html" | sort -u > "$URLS_FILE"
-            fi
-
-            # Engine 3: DuckDuckGo Lite (final fallback)
-            if [[ ! -s "$URLS_FILE" ]]; then
-                local ddg_url="https://html.duckduckgo.com/html/?q=filetype%3A${TARGET_FILETYPE}+site%3A${TARGET_SITE}"
-                echo -e "${GRAY}   [*] Fallback: DuckDuckGo Lite ${RESET}"
-                curl -s -L -A "$ua" \
-                    -H "Accept: text/html" \
-                    "$ddg_url" > "$raw_html" 2>/dev/null
-                _extract_urls "$raw_html" | sort -u > "$URLS_FILE"
-            fi
-
-            rm -f "$raw_html" "$cookie_jar"
-
-            local count=0
-            [[ -f "$URLS_FILE" ]] && count=$(wc -l < "$URLS_FILE")
-            if [[ "$count" -eq 0 ]]; then
-                echo -e "${RED} [!] No URLs found across all search engines. ${RESET}"
-                echo -e "${YELLOW} [*] Possible causes: ${RESET}"
-                echo -e "${YELLOW}     - Google/Bing rate-limiting this IP ${RESET}"
-                echo -e "${YELLOW}     - Domain has no indexed .${TARGET_FILETYPE} files ${RESET}"
-                echo -e "${YELLOW}     - All engines required JavaScript (blocked bot) ${RESET}"
-                echo -e "${GRAY} [→] Try manually in a browser: ${google_url} ${RESET}"
-                return 1
-            fi
-            echo -e "${GREEN} [+] Found ${count} URL(s) → ${URLS_FILE} ${RESET}"
+            _open_url "$google_url"
+            _open_url "$bing_url"
         }
 
-        # ── Step 4: Download files ───────────────────────────────────────────────────
+        # ── Step 4: Operator Manual Download ─────────────────────────────────────────
         function meta_download() {
             mkdir -p "$DOWNLOAD_DIR"
-            local total; total=$(wc -l < "$URLS_FILE")
-            local i=0 failed=0
+            
+            echo -e "\n${CYAN} [2/5] Manual Download Phase ${RESET}"
+            echo -e "${YELLOW}   [1] The search queries have been opened in your browser. ${RESET}"
+            echo -e "${YELLOW}   [2] Download the interesting files and save them to: ${RESET}"
+            echo -e "${GREEN}       >>  ${DOWNLOAD_DIR}/  <<${RESET}"
+            echo -e "${GRAY}   (You can drag and drop files from your system to this folder) ${RESET}"
+            
+            echo -e "\n${MAGENTA}   Press ENTER when you have finished downloading the files...${RESET}"
+            read -r 2>/dev/null
 
-            echo -e "\n${CYAN} [2/5] Downloading ${total} file(s) to ${DOWNLOAD_DIR}/ ${RESET}"
-
-            while IFS= read -r url; do
-                ((i++))
-                local agent="${USER_AGENTS[RANDOM % ${#USER_AGENTS[@]}]}"
-                echo -e "${GRAY}   [${i}/${total}] ${url} ${RESET}"
-                if ! wget -q --user-agent="$agent" -P "$DOWNLOAD_DIR" "$url" 2>/dev/null; then
-                    echo -e "${RED}   [!] Failed: ${url} ${RESET}"
-                    ((failed++))
-                fi
-            done < "$URLS_FILE"
-
-            local downloaded=$(( total - failed ))
-            echo -e "${GREEN} [+] Downloaded: ${downloaded}/${total} | Failed: ${failed} ${RESET}"
-
-            if [[ "$downloaded" -eq 0 ]]; then
-                echo -e "${RED} [!] No files downloaded. Cannot extract metadata. ${RESET}"
+            local file_count
+            file_count=$(ls -1q "$DOWNLOAD_DIR" 2>/dev/null | wc -l)
+            
+            if [[ "$file_count" -eq 0 ]]; then
+                echo -e "${RED} [!] No files found in ${DOWNLOAD_DIR}. Cannot extract metadata. ${RESET}"
                 return 1
             fi
+            
+            echo -e "${GREEN} [+] Found ${file_count} file(s) ready for analysis. ${RESET}"
         }
 
         # ── Step 5: Extract raw metadata ─────────────────────────────────────────────
