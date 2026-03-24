@@ -1,0 +1,39 @@
+# =============================================================================
+# .gitignore — 0wL OPS
+# Ignora arquivos e pastas gerados pelo script durante execução.
+# =============================================================================
+
+# ---[ Diretórios de logs gerados pelo script ]---
+logs/
+scan_logs/
+
+# ---[ Padrões de arquivos de log por módulo ]---
+# ARP Scan
+arp_scan_*.log
+
+# HTTP(S) Banner Grabber
+http_headers_*.log
+
+# Find-Based Attack Surface Analysis
+find_analysis_*.log
+
+# Nmap
+nmap_*.log
+nmap_*.xml
+nmap_*.nmap
+nmap_*.gnmap
+
+# Wireless
+wireless_*.log
+
+# Genérico — qualquer .log gerado localmente
+*.log
+
+# ---[ Arquivos temporários e de saída ]---
+*.tmp
+*.out
+*.bak
+
+# ---[ ARP Recon Daemon (deploy em /mnt) ]---
+# Não rastrear scripts deployados remotamente
+/mnt/arp_recon_daemon.sh

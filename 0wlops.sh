@@ -376,29 +376,28 @@ RELEASE="VADER"
 #* ====== MAIN FUNCTION ======
     # Display numbered menu options
     function display_numbered_menu_options() {
-        # This function
         echo -e "${BRIGHT_GREEN} [+] RECONNAISSANCE [TA0043] ${RESET}"
             echo -e "\t${PURPLE} - The adversary is trying to gather information they can use to plan future operations.${RESET}"
             echo -e "\t${PURPLE} --- ${RESET}"
-            echo -e "\t${RED} [103] Gather Victim Identity Information - Document Metadata (T1589 / T1592) ${RESET}"
-            echo -e "\t${RED} [109] Gather Victim Network Information - Whois & DNS (T1590) ${RESET}"
-            echo -e "\t${RED} [106] Gather Victim Network Information - Reverse DNS Lookup (T1590.001) ${RESET}"
-            echo -e "\t${RED} [107] Gather Victim Network Information - DNS Recon (T1590.001) ${RESET}"
-            echo -e "\t${RED} [102] Search Engine OSINT - Target Profiling (T1593.001) ${RESET}"
-            echo -e "\t${RED} [110] Gather Victim Web Presence - HTML Parsing ${BRIGHT_RED} (DISABLED) ${RESET}"      
+            echo -e "\t${RED} [101] Gather Victim Identity Information - Document Metadata (T1589 / T1592) ${RESET}"
+            echo -e "\t${RED} [102] Gather Victim Network Information - Whois & DNS (T1590) ${RESET}"
+            echo -e "\t${RED} [103] Gather Victim Network Information - Reverse DNS Lookup (T1590.001) ${RESET}"
+            echo -e "\t${RED} [104] Gather Victim Network Information - DNS Recon (T1590.001) ${RESET}"
+            echo -e "\t${RED} [105] Search Engine OSINT - Target Profiling (T1593.001) ${RESET}"
+            echo -e "\t${RED} [106] Gather Victim Web Presence - HTML Parsing ${BRIGHT_RED} (DISABLED) ${RESET}"
         echo
         #
         echo -e "${BRIGHT_GREEN} [+] RESOURCE DEVELOPMENT [TA0042] ${RESET}"
             echo -e "\t${PURPLE} - The adversary is trying to establish resources they can use to support operations.${RESET}"
             echo -e "\t${PURPLE} --- ${RESET}"
-            echo -e "\t${RED} [105] Subdomain Takeover Assessment (T1583.002) ${RESET}" 
-            echo -e "\t${RED} [104] Exploit Public-Facing Infrastructure - DNS Zone Transfer (T1584.002) ${RESET}" 
+            echo -e "\t${RED} [201] Exploit Public-Facing Infrastructure - DNS Zone Transfer (T1584.002) ${RESET}"
+            echo -e "\t${RED} [202] Subdomain Takeover Assessment (T1583.002) ${RESET}"
         echo
         #
-         echo -e "${BRIGHT_GREEN} [+] INITIAL ACCESS [TA0001] ${RESET}"
+        echo -e "${BRIGHT_GREEN} [+] INITIAL ACCESS [TA0001] ${RESET}"
             echo -e "\t${PURPLE} - The adversary is trying to get into your network.${RESET}"
             echo -e "\t${PURPLE} --- ${RESET}"
-            echo -e "\t${RED} [500] Wireless Access Operations Toolkit (T1669) ${RESET}"
+            echo -e "\t${RED} [301] Wireless Access Operations Toolkit (T1566) ${RESET}"
         echo
         #
         echo -e "${BRIGHT_GREEN} [+] EXECUTION [TA0002] ${RESET}"
@@ -409,45 +408,46 @@ RELEASE="VADER"
         echo -e "${BRIGHT_GREEN} [+] PERSISTENCE [TA0003] ${RESET}"
             echo -e "\t${PURPLE} - The adversary is trying to maintain their foothold.${RESET}"
             echo -e "\t${PURPLE} --- ${RESET}"
-        echo  
+        echo
         #
         echo -e "${BRIGHT_GREEN} [+] PRIVILEGE ESCALATION [TA0004] ${RESET}"
             echo -e "\t${PURPLE} - The adversary is trying to gain higher-level permissions.${RESET}"
             echo -e "\t${PURPLE} --- ${RESET}"
-            echo -e "\t${RED} [302] Local Access Recovery - Root Password Reset Guide ${RESET}" 
-            echo -e "\t${RED} [303] Privilege Escalation Enumeration - JALESC ${RESET}"
-            echo -e "\t${RED} [400] Escape to Shell - Vim Techniques ${RESET}" 
-            echo -e "\t${RED} [401] Escape to Shell - Restricted Bash Techniques ${RESET}" 
+            echo -e "\t${RED} [601] Local Access Recovery - Root Password Reset Guide ${RESET}"
+            echo -e "\t${RED} [602] Privilege Escalation Enumeration - JALESC ${RESET}"
+            echo -e "\t${RED} [603] Escape to Shell - Vim Techniques ${RESET}"
+            echo -e "\t${RED} [604] Escape to Shell - Restricted Bash Techniques ${RESET}"
         echo
-        # 
+        #
         echo -e "${BRIGHT_GREEN} [+] DEFENSE EVASION [TA0005] ${RESET}"
             echo -e "\t${PURPLE} - The adversary is trying to avoid being detected.${RESET}"
             echo -e "\t${PURPLE} --- ${RESET}"
-        echo   
+        echo
         #
         echo -e "${BRIGHT_GREEN} [+] CREDENTIAL ACCESS [TA0006] ${RESET}"
             echo -e "\t${PURPLE} - The adversary is trying to steal credentials.${RESET}"
             echo -e "\t${PURPLE} --- ${RESET}"
-            echo -e "\t${RED} [200] Adversary-in-the-Middle (T1557) ${RESET}"
+            echo -e "\t${RED} [801] Adversary-in-the-Middle Simulation (T1557) ${RESET}"
         echo
         #
         echo -e "${BRIGHT_GREEN} [+] DISCOVERY [TA0007] ${RESET}"
             echo -e "\t${PURPLE} - The adversary is trying to figure out your environment.${RESET}"
             echo -e "\t${PURPLE} --- ${RESET}"
-            echo -e "\t${RED} [601] Network Neighbor Discovery - ARP Scan (T1046/T1016) ${RESET}"
-            echo -e "\t${RED} [100] Network Service Discovery - Netcat Port Scan (T1046) ${RESET}"
-            echo -e "\t${RED} [101] Network Service Discovery - Bash Socket Scan (T1046) ${RESET}"
-            echo -e "\t${RED} [600] Network Service Discovery - Nmap Scan (T1046) ${RESET}"
-            echo -e "\t${RED} [108] Service Discovery - HTTP(S) Banner Grabbing (T1046) ${RESET}"
-            echo -e "\t${RED} [203] System Information Discovery - Linux (T1082) ${RESET}" 
-            echo -e "\t${RED} [300] File and Directory Discovery - Attack Surface Review (T1083) ${RESET}" 
-            echo -e "\t${RED} [301] File and Directory Discovery - Quick Reference (T1083) ${RESET}" 
-            echo -e "\t${RED} [201] SMB Service Enumeration ${BRIGHT_RED}(UNSTABLE) ${RESET}"
-        echo   
+            echo -e "\t${RED} [901] Network Service Discovery - Netcat Port Scan (T1046) ${RESET}"
+            echo -e "\t${RED} [902] Network Service Discovery - Bash Socket Scan (T1046) ${RESET}"
+            echo -e "\t${RED} [903] Service Discovery - HTTP(S) Banner Grabbing (T1046) ${RESET}"
+            echo -e "\t${RED} [904] SMB Service Enumeration ${BRIGHT_RED}(UNSTABLE) ${RESET}"
+            echo -e "\t${RED} [905] System Information Discovery - Linux (T1082) ${RESET}"
+            echo -e "\t${RED} [906] File and Directory Discovery - Attack Surface Review (T1083) ${RESET}"
+            echo -e "\t${RED} [907] File and Directory Discovery - Quick Reference (T1083) ${RESET}"
+            echo -e "\t${RED} [908] Network Service Discovery - Nmap Scan (T1046) ${RESET}"
+            echo -e "\t${RED} [909] Network Neighbor Discovery - ARP Scan (T1046/T1016) ${RESET}"
+        echo
         #
         echo -e "${BRIGHT_GREEN} [+] LATERAL MOVEMENT [TA0008] ${RESET}"
             echo -e "\t${PURPLE} - The adversary is trying to move through your environment.${RESET}"
             echo -e "\t${PURPLE} --- ${RESET}"
+            echo -e "\t${RED} [1001] Internal Recon Agent Deployment ${RESET}"
         echo
         #
         echo -e "${BRIGHT_GREEN} [+] COLLECTION [TA0009] ${RESET}"
@@ -465,15 +465,15 @@ RELEASE="VADER"
             echo -e "\t${PURPLE} --- ${RESET}"
         echo
         #
-        echo -e "${BRIGHT_GREEN} [+] IMPACT [TA0011] ${RESET}"
+        echo -e "${BRIGHT_GREEN} [+] IMPACT [TA0040] ${RESET}"
             echo -e "\t${PURPLE} - The adversary is trying to manipulate, interrupt, or destroy your systems and data.${RESET}"
             echo -e "\t${PURPLE} --- ${RESET}"
         echo
         #
         echo -e "${GRAY} [+] OPERATOR UTILITIES ${RESET}"
-            echo -e "\t${GRAY} [202] Network Commands - Quick Reference ${RESET}"
-            echo -e "\t${GRAY} [501] Windows Commands - Quick Reference ${RESET}"
-            echo -e "\t${GRAY} [001] Enable WSL Routing to VirtualBox VM ${RESET}"
+            echo -e "\t${GRAY} [001] Network Commands - Quick Reference ${RESET}"
+            echo -e "\t${GRAY} [002] Windows Commands - Quick Reference ${RESET}"
+            echo -e "\t${GRAY} [003] Enable WSL Routing to VirtualBox VM ${RESET}"
             echo -e "\t${GRAY} [000] Exit ${RESET}"
         echo
         echo -e "${RED}+=========================== ${BRIGHT_GREEN}We Hunt in the Shadows${RESET}${RED} ================================+${RESET}"
@@ -491,7 +491,7 @@ RELEASE="VADER"
             #
             # Example usage:
             # ./0wl.sh           # Interactive menu
-            # ./0wl.sh 12        # Instantly run Linux System Info
+            # ./0wl.sh 101       # Instantly run Metadata Analysis
             # ./0wl.sh -h        # Show help menu
 
         # If no argument is provided, launch interactive menu
@@ -506,38 +506,41 @@ RELEASE="VADER"
         function process_menu_option() {
             local option="$1"
             case $option in
-            #* [+] RECONNAISSANCE
-                102) google_hacking ;;          # Gather Victim Host Information - Search Engines (T1593.001)
-                103) metadata_analysis ;;       # Gather Victim Identity Information - Document Metadata
-                106) rev_dns ;;                 # Gather Victim Network Information - Reverse DNS Lookup
-                107) recon_dns ;;               # Gather Victim Network Information - DNS Recon
-                109) whois_dns_recon ;;         # Gather Victim Network Information - Whois & DNS
-                110) parsing_html ;;            # Gather Victim Web Presence - HTML Parsing (DISABLED)
-            #* [+] RESOURCE DEVELOPMENT / INITIAL ACCESS
-                104) dns_zt ;;                  # Exploit Public-Facing Infrastructure - DNS Zone Transfer
-                105) Subdomain_takeover ;;      # Subdomain Takeover Assessment
-                500) wireless_pentest ;;        # Wireless Access Operations Toolkit
-            #* [+] DISCOVERY
-                100) portscan ;;                # Network Service Discovery - Netcat Port Scan
-                101) portscan_bashsocket ;;     # Network Service Discovery - Bash Socket Scan
-                108) banner_grabber ;;          # Service Discovery - HTTP(S) Banner Grabbing
-                201) smb_enum ;;               # SMB Service Enumeration (UNSTABLE)
-                203) linux_sysinfo ;;           # System Information Discovery - Linux
-                300) find_based_attack_surface_analysis ;; # File and Directory Discovery - Attack Surface Review
-                301) find_command_examples ;;   # File and Directory Discovery - Quick Reference
-                600) nmap_network_discovery ;;  # Network Service Discovery - Nmap Scan
-                601) arp_network_scan ;;        # Network Neighbor Discovery - ARP Scan
-            #* [+] CREDENTIAL ACCESS / COLLECTION
-                200) mitm ;;                    # Adversary-in-the-Middle Simulation (T1557)
-            #* [+] PRIVILEGE ESCALATION
-                302) linux_root_password_reset ;; # Local Access Recovery - Root Password Reset Guide
-                303) jalesc ;;                  # Privilege Escalation Enumeration - JALESC
-                400) vim_quick_reference ;;     # Escape to Shell - Vim Techniques
-                401) rbash_escape_methods ;;    # Escape to Shell - Restricted Bash Techniques
+            #* [+] RECONNAISSANCE [TA0043]
+                101) metadata_analysis ;;       # Gather Victim Identity Information - Document Metadata
+                102) whois_dns_recon ;;         # Gather Victim Network Information - Whois & DNS
+                103) rev_dns ;;                 # Gather Victim Network Information - Reverse DNS Lookup
+                104) recon_dns ;;               # Gather Victim Network Information - DNS Recon
+                105) google_hacking ;;          # Search Engine OSINT - Target Profiling
+                106) parsing_html ;;            # Gather Victim Web Presence - HTML Parsing (DISABLED)
+            #* [+] RESOURCE DEVELOPMENT [TA0042]
+                201) dns_zt ;;                  # Exploit Public-Facing Infrastructure - DNS Zone Transfer
+                202) Subdomain_takeover ;;      # Subdomain Takeover Assessment
+            #* [+] INITIAL ACCESS [TA0001]
+                301) wireless_pentest ;;        # Wireless Access Operations Toolkit
+            #* [+] PRIVILEGE ESCALATION [TA0004]
+                601) linux_root_password_reset ;; # Local Access Recovery - Root Password Reset Guide
+                602) jalesc ;;                  # Privilege Escalation Enumeration - JALESC
+                603) vim_quick_reference ;;     # Escape to Shell - Vim Techniques
+                604) rbash_escape_methods ;;    # Escape to Shell - Restricted Bash Techniques
+            #* [+] CREDENTIAL ACCESS [TA0006]
+                801) mitm ;;                    # Adversary-in-the-Middle Simulation (T1557)
+            #* [+] DISCOVERY [TA0007]
+                901) portscan ;;                # Network Service Discovery - Netcat Port Scan
+                902) portscan_bashsocket ;;     # Network Service Discovery - Bash Socket Scan
+                903) banner_grabber ;;          # Service Discovery - HTTP(S) Banner Grabbing
+                904) smb_enum ;;               # SMB Service Enumeration (UNSTABLE)
+                905) linux_sysinfo ;;           # System Information Discovery - Linux
+                906) find_based_attack_surface_analysis ;; # File and Directory Discovery - Attack Surface Review
+                907) find_command_examples ;;   # File and Directory Discovery - Quick Reference
+                908) nmap_network_discovery ;;  # Network Service Discovery - Nmap Scan
+                909) arp_network_scan ;;        # Network Neighbor Discovery - ARP Scan
+            #* [+] LATERAL MOVEMENT [TA0008]
+                1001) arp_recon_daemon ;;       # Internal Recon Agent Deployment
             #* [+] OPERATOR UTILITIES
-                202) useful_linux_commands ;;   # Network Commands - Quick Reference
-                501) windows_basic_commands ;;  # Windows Commands - Quick Reference
-                1) enable_wsl_routing_vbox ;;   # Enable WSL Routing to VirtualBox VM
+                1) useful_linux_commands ;;     # Network Commands - Quick Reference
+                2) windows_basic_commands ;;    # Windows Commands - Quick Reference
+                3) enable_wsl_routing_vbox ;;   # Enable WSL Routing to VirtualBox VM
                 0) exit_script ;;               # Exit
             #* Invalid option
                 *) invalid_option ;;
@@ -547,21 +550,22 @@ RELEASE="VADER"
         function validate_input() {
             local input="$1"
             local valid_options=(
-                                $(seq 1 1)       # [+] OPERATOR UTILITIES (Enable WSL Routing)
-                                $(seq 100 110)   # [+] RECONNAISSANCE / RESOURCE DEVELOPMENT / DISCOVERY
-                                $(seq 200 203)   # [+] CREDENTIAL ACCESS / COLLECTION / DISCOVERY
-                                $(seq 300 303)   # [+] DISCOVERY / PRIVILEGE ESCALATION
-                                $(seq 400 401)   # [+] PRIVILEGE ESCALATION (Escape to Shell)
-                                $(seq 500 501)   # [+] RESOURCE DEVELOPMENT / OPERATOR UTILITIES
-                                $(seq 600 602)   # [+] DISCOVERY / LATERAL MOVEMENT / INTERNAL RECON
+                                $(seq 1 3)       # [+] OPERATOR UTILITIES (001-003)
+                                $(seq 101 106)   # [+] RECONNAISSANCE [TA0043]
+                                $(seq 201 202)   # [+] RESOURCE DEVELOPMENT [TA0042]
+                                $(seq 301 301)   # [+] INITIAL ACCESS [TA0001]
+                                $(seq 601 604)   # [+] PRIVILEGE ESCALATION [TA0004]
+                                $(seq 801 801)   # [+] CREDENTIAL ACCESS [TA0006]
+                                $(seq 901 909)   # [+] DISCOVERY [TA0007]
+                                $(seq 1001 1001) # [+] LATERAL MOVEMENT [TA0008]
                                 )  # Create a list of valid options
             valid_options=("${valid_options[@]}")
             for valid in "${valid_options[@]}"; do
                 if [[ "$input" == "$valid" ]]; then
-                    return 0  
+                    return 0
                 fi
             done
-            return 1  
+            return 1
         }
 
         function prompt_user_inputs() {
@@ -2470,7 +2474,8 @@ RELEASE="VADER"
     }
     # Function: Perform metadata analysis for files on specific domains
     function metadata_analysis() {
-        # Metadata Analysis - Perform metadata analysis for files on specific domains    
+        # Metadata Analysis - Perform metadata analysis for files on specific domains
+            # 101) metadata_analysis    
             # ==============================================================================
             # Metadata Analysis
             # Version: 1.2 (2024-01-25)
