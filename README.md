@@ -2,7 +2,7 @@
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)  
 ![Bash](https://img.shields.io/badge/Bash-Scripting-1f425f.svg)
-![Version](https://img.shields.io/badge/Version-1.27.020--VADER-red.svg)
+![Version](https://img.shields.io/badge/Version-1.27.030--VADER-red.svg)
 
 ## **We Hunt in the Shadows.**  
 
@@ -18,14 +18,15 @@
 
 ## Features  
 
-| **Category (MITRE ATT&CK)**               | **Modules**                                                                                                                |
+| **Tactic (MITRE ATT&CK)**                | **Modules**                                                                                                                |
 | ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| **Reconnaissance**                        | Google Hacking, DNS Recon, Reverse DNS, WHOIS & Passive DNS, Metadata Extraction, HTML Parsing                             |
-| **Resource Development / Initial Access** | DNS Zone Transfer, Subdomain Takeover, Wireless Access Operations                                                          |
-| **Discovery**                             | Nmap, Netcat, Bash Socket Scan, ARP Scan, SMB Enumeration, HTTP(S) Banner Grabbing, System Info, File & Directory Analysis |
-| **Credential Access / Collection**        | Man-in-the-Middle Simulation (T1557)                                                                                       |
-| **Privilege Escalation**                  | Root Password Reset, JALESC Enumeration, Vim Shell Escape, Restricted Bash Escape                                          |
-| **Lateral Movement / Internal Recon**     | Internal Recon Agent Deployment (ARP-based)                                                                                |
+| **Reconnaissance** TA0043                 | Google Hacking, DNS Recon, Reverse DNS, WHOIS & Passive DNS, Metadata Extraction, HTML Parsing                             |
+| **Resource Development** TA0042           | DNS Zone Transfer, Subdomain Takeover                                                                                      |
+| **Initial Access** TA0001                 | Wireless Access Operations                                                                                                 |
+| **Privilege Escalation** TA0004           | Root Password Reset, JALESC Enumeration, Vim Shell Escape, Restricted Bash Escape                                          |
+| **Credential Access** TA0006              | Man-in-the-Middle Simulation (T1557)                                                                                       |
+| **Discovery** TA0007                      | Nmap, Netcat, Bash Socket Scan, ARP Scan, SMB Enumeration, HTTP(S) Banner Grabbing, System Info, File & Directory Analysis |
+| **Lateral Movement** TA0008               | Internal Recon Agent Deployment (ARP-based)                                                                                |
 | **Operator Utilities**                    | Network Commands Quick Ref, Windows Commands Quick Ref, WSL ↔ VirtualBox Routing                                           |
 
 ---
@@ -35,8 +36,8 @@
 1. **Clone the repo**  
 
    ```bash
-   git clone https://github.com/R3v4N/0wL-OPS.git
-   cd 0wL-OPS
+   git clone https://github.com/JPGress/owl-ops.git
+   cd owl-ops
    chmod +x 0wlops.sh
    ```
 
@@ -69,9 +70,9 @@ Run a specific module directly by its option number:
 Example:
 
 ```bash
-./0wlops.sh 107   # DNS Reconnaissance
-./0wlops.sh 200   # Adversary-in-the-Middle Simulation
-./0wlops.sh 303   # JALESC - Privilege Escalation Enumeration
+./0wlops.sh 101   # Metadata Analysis (Reconnaissance)
+./0wlops.sh 801   # Adversary-in-the-Middle Simulation (Credential Access)
+./0wlops.sh 901   # Netcat Port Scan (Discovery)
 ```
 
 ### Help Menu
@@ -84,67 +85,74 @@ Example:
 
 ## Module Reference
 
-### [+] RECONNAISSANCE
+> Option numbers follow a **centesimal scheme** — each hundred maps to one MITRE ATT&CK tactic.
+
+### [+] RECONNAISSANCE [TA0043]
 
 | Option | Module                                                 | MITRE Technique |
 | ------ | ------------------------------------------------------ | --------------- |
-| 102    | Gather Victim Host Information - Search Engines        | T1593.001       |
-| 103    | Gather Victim Identity Information - Document Metadata | T1589 / T1592   |
-| 106    | Gather Victim Network Information - Reverse DNS Lookup | T1590.001       |
-| 107    | Gather Victim Network Information - DNS Recon          | T1590.001       |
-| 109    | Gather Victim Network Information - Whois & DNS        | T1590           |
-| 110    | Gather Victim Web Presence - HTML Parsing *(DISABLED)* | —               |
+| 101    | Gather Victim Identity Information - Document Metadata | T1589 / T1592   |
+| 102    | Gather Victim Network Information - Whois & DNS        | T1590           |
+| 103    | Gather Victim Network Information - Reverse DNS Lookup | T1590.001       |
+| 104    | Gather Victim Network Information - DNS Recon          | T1590.001       |
+| 105    | Search Engine OSINT - Target Profiling                 | T1593.001       |
+| 106    | Gather Victim Web Presence - HTML Parsing *(DISABLED)* | —               |
 
-### [+] RESOURCE DEVELOPMENT / INITIAL ACCESS
+### [+] RESOURCE DEVELOPMENT [TA0042]
 
 | Option | Module                                                   | MITRE Technique |
 | ------ | -------------------------------------------------------- | --------------- |
-| 104    | Exploit Public-Facing Infrastructure - DNS Zone Transfer | T1190           |
-| 105    | Subdomain Takeover Assessment                            | —               |
-| 500    | Wireless Access Operations Toolkit                       | —               |
+| 201    | Exploit Public-Facing Infrastructure - DNS Zone Transfer | T1584.002       |
+| 202    | Subdomain Takeover Assessment                            | T1583.002       |
 
-### [+] DISCOVERY
-
-| Option | Module                                               | MITRE Technique |
-| ------ | ---------------------------------------------------- | --------------- |
-| 100    | Network Service Discovery - Netcat Port Scan         | T1046           |
-| 101    | Network Service Discovery - Bash Socket Scan         | T1046           |
-| 108    | Service Discovery - HTTP(S) Banner Grabbing          | T1046           |
-| 201    | SMB Service Enumeration *(UNSTABLE)*                 | —               |
-| 203    | System Information Discovery - Linux                 | T1082           |
-| 300    | File and Directory Discovery - Attack Surface Review | T1083           |
-| 301    | File and Directory Discovery - Quick Reference       | T1083           |
-| 600    | Network Service Discovery - Nmap Scan                | T1046           |
-| 601    | Network Neighbor Discovery - ARP Scan                | T1046 / T1016   |
-
-### [+] CREDENTIAL ACCESS / COLLECTION
+### [+] INITIAL ACCESS [TA0001]
 
 | Option | Module                             | MITRE Technique |
 | ------ | ---------------------------------- | --------------- |
-| 200    | Adversary-in-the-Middle Simulation | T1557           |
+| 301    | Wireless Access Operations Toolkit | T1566           |
 
-### [+] PRIVILEGE ESCALATION
+### [+] PRIVILEGE ESCALATION [TA0004]
 
 | Option | Module                                            |
 | ------ | ------------------------------------------------- |
-| 302    | Local Access Recovery - Root Password Reset Guide |
-| 303    | Privilege Escalation Enumeration - JALESC         |
-| 400    | Escape to Shell - Vim Techniques                  |
-| 401    | Escape to Shell - Restricted Bash Techniques      |
+| 601    | Local Access Recovery - Root Password Reset Guide |
+| 602    | Privilege Escalation Enumeration - JALESC         |
+| 603    | Escape to Shell - Vim Techniques                  |
+| 604    | Escape to Shell - Restricted Bash Techniques      |
 
-### [+] LATERAL MOVEMENT / INTERNAL RECON
+### [+] CREDENTIAL ACCESS [TA0006]
+
+| Option | Module                             | MITRE Technique |
+| ------ | ---------------------------------- | --------------- |
+| 801    | Adversary-in-the-Middle Simulation | T1557           |
+
+### [+] DISCOVERY [TA0007]
+
+| Option | Module                                               | MITRE Technique |
+| ------ | ---------------------------------------------------- | --------------- |
+| 901    | Network Service Discovery - Netcat Port Scan         | T1046           |
+| 902    | Network Service Discovery - Bash Socket Scan         | T1046           |
+| 903    | Service Discovery - HTTP(S) Banner Grabbing          | T1046           |
+| 904    | SMB Service Enumeration *(UNSTABLE)*                 | —               |
+| 905    | System Information Discovery - Linux                 | T1082           |
+| 906    | File and Directory Discovery - Attack Surface Review | T1083           |
+| 907    | File and Directory Discovery - Quick Reference       | T1083           |
+| 908    | Network Service Discovery - Nmap Scan                | T1046           |
+| 909    | Network Neighbor Discovery - ARP Scan                | T1046 / T1016   |
+
+### [+] LATERAL MOVEMENT [TA0008]
 
 | Option | Module                          |
 | ------ | ------------------------------- |
-| 602    | Internal Recon Agent Deployment |
+| 1001   | Internal Recon Agent Deployment |
 
 ### [+] OPERATOR UTILITIES
 
 | Option | Module                              |
 | ------ | ----------------------------------- |
-| 202    | Network Commands - Quick Reference  |
-| 501    | Windows Commands - Quick Reference  |
-| 001    | Enable WSL Routing to VirtualBox VM |
+| 001    | Network Commands - Quick Reference  |
+| 002    | Windows Commands - Quick Reference  |
+| 003    | Enable WSL Routing to VirtualBox VM |
 | 000    | Exit                                |
 
 ---
@@ -167,5 +175,5 @@ Feel free to modify and use, **but use responsibly.**
 
 Want to improve 0wL OPS? Fork the repo, submit a PR, or open an issue!
 
-**GitHub Repo**: https://github.com/R3v4N/0wL-OPS  
+**GitHub Repo**: https://github.com/JPGress/owl-ops  
 **Contact:** R3v4N aka 0wL (jpgress@gmail.com)
