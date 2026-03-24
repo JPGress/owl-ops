@@ -46,6 +46,11 @@
     #
     # Version History:
     #
+    #  v1.27.030 - 2026-03-24 (VADER), R3v4N:
+    #   - Focused on solving bugs and improving performance.
+    #   - Added new menu options.
+    #   - Reorganized menu options.
+    #
     #  v1.27.020 - 2026-03-24 (VADER), R3v4N:
     #   - Focused on solving bugs and improving performance.
     #   - More PTES categories.
