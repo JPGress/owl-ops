@@ -46,6 +46,10 @@
     #
     # Version History:
     #
+    #  v1.27.020 - 2026-03-24 (VADER), R3v4N:
+    #   - Focused on solving bugs and improving performance.
+    #   - More PTES categories.
+    #
     #  v1.27.010 - 2026-03-24 (VADER), R3v4N:
     #   - Focused on solving bugs and improving performance.
     #   - Added new menu options.
@@ -78,7 +82,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="1.27.010"
+VERSION="1.27.021"
 # Darth Release
 RELEASE="VADER"
 #* ====== CONSTANTS ======
@@ -380,7 +384,7 @@ RELEASE="VADER"
             echo -e "\t${RED} [109] Gather Victim Network Information - Whois & DNS (T1590) ${RESET}"
             echo -e "\t${RED} [106] Gather Victim Network Information - Reverse DNS Lookup (T1590.001) ${RESET}"
             echo -e "\t${RED} [107] Gather Victim Network Information - DNS Recon (T1590.001) ${RESET}"
-            echo -e "\t${RED} [102] Gather Victim Host Information - Search Engines (T1593.001) ${RESET}"
+            echo -e "\t${RED} [102] Search Engine OSINT - Target Profiling (T1593.001) ${RESET}"
             echo -e "\t${RED} [110] Gather Victim Web Presence - HTML Parsing ${BRIGHT_RED} (DISABLED) ${RESET}"      
         echo
         #
